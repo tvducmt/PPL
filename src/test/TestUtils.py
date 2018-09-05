@@ -12,7 +12,7 @@ from lexererr import *
 # from StaticCheck import StaticChecker
 # from StaticError import *
 # from CodeGenerator import CodeGenerator
-import subprocess
+# import subprocess
 
 JASMIN_JAR = "./external/jasmin.jar"
 TEST_DIR = "./test/testcases/"
@@ -54,7 +54,8 @@ class TestLexer:
     def printLexeme(dest,lexer):
         tok = lexer.nextToken()
         if tok.type != Token.EOF:
-            dest.write(tok.text+",")
+            dest.write(tok.text +"      "+ str(tok.type)+"\n"+ ",")
+           # dest.write(tok.text + ",")
             TestLexer.printLexeme(dest,lexer)
         else:
             dest.write("<EOF>")

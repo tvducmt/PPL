@@ -1,1 +1,2 @@
-abc,<EOF>
+abc      51
+,<EOF>

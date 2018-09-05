@@ -1,0 +1,5 @@
+not      27
+,hey      51
+,or      29
+,mod      31
+,<EOF>
