@@ -1,3 +1,1 @@
-int main () {
-            putIntLn(4);
-        }
+var a , b , c : integer ; e , f : real ;

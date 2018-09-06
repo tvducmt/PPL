@@ -11,10 +11,7 @@ class LexerSuite(unittest.TestCase):
     #    self.assertTrue(TestLexer.test("_Abc1","_Abc1,<EOF>",104))
     #    self.assertTrue(TestLexer.test("_123 a_123 1_2adv","_123,a_123,1,_2adv,<EOF>",105))
     #    self.assertTrue(TestLexer.test("1abc","1,abc,<EOF>",106))
-    # # def test_integer(self):
-    # #    """test integers"""
-    # #    self.assertTrue(TestLexer.test("123a123","123,a,123,<EOF>",104))
-
+    
     # #Comment
     # def test_comment(self):
     #     """test comment"""
@@ -34,20 +31,71 @@ class LexerSuite(unittest.TestCase):
     #                                 *
     #                                 *) } int main {""","""},int,main,{,<EOF>""", 112))
     
-    # #Keywords
-    # def test_keyword(self):
-    #     """test keywords"""
-    #     # self.assertTrue(TestLexer.test("""
-    #     # break else return
-    #     #     ""","""break,else,return,<EOF>""",113))
-    #     self.assertTrue(TestLexer.test("""break else return false abdf""","""break,else,return,false,abdf,<EOF>""", 114))
+    #Keywords
+    def test_keyword(self):
+        """test keywords"""
+        # self.assertTrue(TestLexer.test("""
+        # breaK Else return
+        #     ""","""breaK,Else,return,<EOF>""",113))
+        # self.assertTrue(TestLexer.test("""break else return false abdf""","""break,else,return,false,abdf,<EOF>""", 114))
+        # self.assertTrue(TestLexer.test("""
+        # BreaK break return
+        #     ""","""BreaK,break,return,<EOF>""",115))
+        # self.assertTrue(TestLexer.test("""
+        # continue for to downto CoNtinuE
+        #     ""","""continue,for,to,downto,CoNtinuE,<EOF>""",116))
+        
+        
    # Test Operator
-    def test_operator(self):
-        """test operator"""
-       # self.assertTrue(TestLexer.test("""a=b+c*d/10""","""a,=,b,+,c,*,d,/,10,<EOF>""", 115))
-        self.assertTrue(TestLexer.test("""not hey  or    mod""","""not,hey,or,mod,<EOF>""", 116))
+    # def test_operator(self):
+    #     """test operator"""
+    #     self.assertTrue(TestLexer.test("""a=b+c*d/10""","""a,=,b,+,c,*,d,/,10,<EOF>""", 117))
+    #     self.assertTrue(TestLexer.test("""not hey  or    mod""","""not,hey,or,mod,<EOF>""", 118))
     # #Seperator
     # def test_seperator(self):
     #     """test seperator"""
     #     self.assertTrue(TestLexer.test("""integer a[5];
-    # There are many, people""","""integer,a,[,5,],;,There,are,many,,,people,<EOF>""", 117))
+    # There are many, people ..""","""integer,a,[,5,],;,There,are,many,,,people,..,<EOF>""", 119))
+    # # INTLIT
+    # def test_intlit(self):
+    #     """test intlit"""
+    #     self.assertTrue(TestLexer.test("a=1000", "a,=,100,<EOF>", 120))
+    # FLOATLIT
+    #def test_floatlit(self):
+    #    """test FLOATLIT"""
+        # self.assertTrue(TestLexer.test("1.2", "1.2,<EOF>", 121))
+        # self.assertTrue(TestLexer.test("1.", "1.,<EOF>", 122))
+        # self.assertTrue(TestLexer.test(".1", ".1,<EOF>", 123))
+        # self.assertTrue(TestLexer.test("1e2", "1e2,<EOF>", 124))
+        # self.assertTrue(TestLexer.test("1.2E-2", "1.2E-2,<EOF>", 125))
+        # self.assertTrue(TestLexer.test("9.0", "9.0,<EOF>", 126))
+        # self.assertTrue(TestLexer.test("12e8", "12e8,<EOF>", 127))
+        # self.assertTrue(TestLexer.test("0.33E-3", "0.33E-3,<EOF>", 128))
+        # self.assertTrue(TestLexer.test("128e-42", "128e-42,<EOF>", 129))
+        # self.assertTrue(TestLexer.test("e-12", "e,-,12,<EOF>", 130))
+        # self.assertTrue(TestLexer.test("143e", "143,e,<EOF>", 131))
+        #self.assertTrue(TestLexer.test("""1.2e-2 .1E2 9.0 12e8 0.33E-3 128e-42""", """1.2e-2,.1E2,9.0,12e8,0.33E-3,128e-42,<EOF>""", 132))
+        #self.assertTrue(TestLexer.test("e-12", "e,-,12,<EOF>", 133)) 
+        #self.assertTrue(TestLexer.test("23e", "23,e,<EOF>", 133))
+    #boolean literal
+    # def test_booleanlit(self):
+    #     self.assertTrue(TestLexer.test("true false hello", "true,false,<EOF>", 132))
+        #self.assertTrue(TestLexer.test("True False hello", "True,False,hello,<EOF>", 133))
+    # def test_stringlit(self):
+    #     self.assertTrue(TestLexer.test(""" "hello" """, """hello,<EOF>""", 134))
+    
+    # def test_integer(self):
+    #    """test integers"""
+    #    self.assertTrue(TestLexer.test("123a123","123,a123,<EOF>",135))
+    #    self.assertTrue(TestLexer.test("a = 1000;","a,=,1000,;,<EOF>",136))
+    #    self.assertTrue(TestLexer.test(" -5000","-,5000,<EOF>",137))
+    #    self.assertTrue(TestLexer.test(" - 8000","-,8000,<EOF>",138))
+    #    self.assertTrue(TestLexer.test(" --8000","-,-,8000,<EOF>",139))
+
+    def test_stringlit(self):
+       """test stringlit"""
+       self.assertTrue(TestLexer.test('"hello"','"hello",<EOF>',135))
+    #    self.assertTrue(TestLexer.test("a = 1000;","a,=,1000,;,<EOF>",136))
+    #    self.assertTrue(TestLexer.test(" -5000","-,5000,<EOF>",137))
+    #    self.assertTrue(TestLexer.test(" - 8000","-,8000,<EOF>",138))
+    #    self.assertTrue(TestLexer.test(" --8000","-,-,8000,<EOF>",139))

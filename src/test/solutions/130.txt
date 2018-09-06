@@ -1,0 +1,4 @@
+true      5
+,false      5
+,hello      52
+,<EOF>

@@ -1,5 +1,6 @@
-not      27
-,hey      51
-,or      29
-,mod      31
+continue      35
+,for      36
+,to      55
+,downto      38
+,CoNtinuE      35
 ,<EOF>
