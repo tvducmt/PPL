@@ -1,0 +1,5 @@
+procedure abc ();
+            begin
+                if 3//4 then
+                    b:=3;
+            end

@@ -1,0 +1,5 @@
+procedure abc ();
+            begin
+                if color = red then;
+                    hk:=56;
+            end

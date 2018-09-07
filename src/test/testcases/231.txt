@@ -1,0 +1,7 @@
+procedure abc ();
+            begin
+                if color = red then
+                   a:=3;
+                else
+                    b:=3;
+            end

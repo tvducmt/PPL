@@ -1,0 +1,4 @@
+procedure abc ();
+            begin
+                a:=b:=c:=d:=(12+3);
+            end

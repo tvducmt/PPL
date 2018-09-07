@@ -1,0 +1,5 @@
+procedure abc ();
+            begin
+                if +hello then
+                    b:=3;
+            end
