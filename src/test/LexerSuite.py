@@ -32,8 +32,8 @@ class LexerSuite(unittest.TestCase):
     #                                 *) } int main {""","""},int,main,{,<EOF>""", 112))
     
     #Keywords
-    def test_keyword(self):
-        """test keywords"""
+    # def test_keyword(self):
+    #     """test keywords"""
         # self.assertTrue(TestLexer.test("""
         # breaK Else return
         #     ""","""breaK,Else,return,<EOF>""",113))
@@ -78,8 +78,8 @@ class LexerSuite(unittest.TestCase):
         #self.assertTrue(TestLexer.test("e-12", "e,-,12,<EOF>", 133)) 
         #self.assertTrue(TestLexer.test("23e", "23,e,<EOF>", 133))
     #boolean literal
-    # def test_booleanlit(self):
-    #     self.assertTrue(TestLexer.test("true false hello", "true,false,<EOF>", 132))
+    def test_booleanlit(self):
+        self.assertTrue(TestLexer.test("true false hello", "true,false,hello,<EOF>", 132))
         #self.assertTrue(TestLexer.test("True False hello", "True,False,hello,<EOF>", 133))
     # def test_stringlit(self):
     #     self.assertTrue(TestLexer.test(""" "hello" """, """hello,<EOF>""", 134))
@@ -93,9 +93,13 @@ class LexerSuite(unittest.TestCase):
     #    self.assertTrue(TestLexer.test(" --8000","-,-,8000,<EOF>",139))
 
     def test_stringlit(self):
-       """test stringlit"""
-       self.assertTrue(TestLexer.test('"hello"','"hello",<EOF>',135))
-    #    self.assertTrue(TestLexer.test("a = 1000;","a,=,1000,;,<EOF>",136))
-    #    self.assertTrue(TestLexer.test(" -5000","-,5000,<EOF>",137))
+        """test stringlit"""
+        #self.assertTrue(TestLexer.test(' "hello" ','"hello",<EOF>',140))
+        #self.assertTrue(TestLexer.test(' "hello i am duc" ','"hello i am duc",<EOF>',140))
+        #self.assertTrue(TestLexer.test(""""abc""",'Unclosed String: "abc',141))
+        #self.assertTrue(TestLexer.test(""""edf
+         #                                abc" ""","""Illegal Escape In String: "edf""",142))
+        self.assertTrue(TestLexer.test(""""string\t123" ""","""Unclosed String: "string	123'""",143))
+        #self.assertTrue(TestLexer.test('"string\t123','Unclosed String: "string	123',144))
     #    self.assertTrue(TestLexer.test(" - 8000","-,8000,<EOF>",138))
     #    self.assertTrue(TestLexer.test(" --8000","-,-,8000,<EOF>",139))

@@ -127,25 +127,14 @@ REALTYPE: 'real';
 BOOLEANLIT: TRUE | FALSE;
  
 
-fragment ESCAPE: '\\'('b'|'f'|'r'|'n'|'t'|'\''|'"'|'\\');
 
-STRINGLIT: '"' (~[\b\f\r\n\t"\\]|ESCAPE)* '"'; 
+
+STRINGLIT: '"' ~('\b'|'\f'|'\r'|'\n'|'\t'|'\''|'"'|'\\')* '"';
                                         // {
-                                        //     s = getText();
-                                        //     s = s.substring(1,s.length()-1);
-                                        //     setText(s);
+                                        //     s = self.text;
+                                        //     raise s;
                                         // };
 
-// STRINGLI: '"' (ESCAPE_CHAR | ~('"'|'\\'|[\r\n]))* '"';
-
-// fragment ESCAPE_CHAR:   '\\' 't' 
-//            |   '\\' 'n' 
-//            |	'\\' 'b'
-//            |	'\\' 'f'
-//            |	'\\' 'r'
-//            |	'\\' '"'
-//            |	'\\' '\\' 
-//     ;
     
 fragment Nguyen: [0-9]+;
 
@@ -262,19 +251,25 @@ ID: ([a-zA-Z]|'_')([a-zA-Z0-9]|'_')*;
 
 
 //Error
-fragment ILLEGAL: ('\\'~('b'|'f'|'r'|'n'|'t'|'"'|'\\'|'\''));
+//fragment ESCAPE: '\\'('b'|'f'|'r'|'n'|'t'|'\''|'"'|'\\');
+//fragment ILLEGAL: ('\\'~('b'|'f'|'r'|'n'|'t'|'"'|'\\'|'\''));
+fragment ESCAPE_CHAR:   '\\' 't' 
+           |   '\\' 'n' 
+           |	'\\' 'b'
+           |	'\\' 'f'
+           |	'\\' 'r'
+           |	'\\' '"'
+           |	'\\' '\\' ;
+ILLEGAL_ESCAPE: '"' .*? ('\b'|'\f'|'\r'|'\n'|'\t'|'"'|'\\'|'\'') {
+                                            s = IllegalEscape(self.text);
+                                            raise s;
+                                        };
+UNCLOSE_STRING: '"' (~([\n\r]|'"')|ESCAPE_CHAR)* {
+                                            x = UncloseString(self.text);
+                                            raise x;
+                                        };
 
-ILLEGAL_ESCAPE: '"' (~[\n"\\]|ESCAPE)* ILLEGAL ;
-                            // {
-                            //                 String s = getText();
-                            //                 s = s.substring(1,s.length());
-                            //                 setText(s);
-                            //             };
-UNCLOSE_STRING: '"'(~[\n"\\]|ESCAPE)*  ;
-// {
-//                                             String s = getText();
-//                                             s = s.substring(1,s.length());
-//                                             setText(s);
-//                                         };
-
-ERROR_CHAR: .;
+ERROR_CHAR: .{
+                s = ErrorToken(self.text);
+                raise s;
+             };

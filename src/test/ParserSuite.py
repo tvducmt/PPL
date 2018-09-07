@@ -353,6 +353,23 @@ class ParserSuite(unittest.TestCase):
             end"""
         expect='successful'
         self.assertTrue(TestParser.test(input,expect,240))
+    def test_for_state_miss_colon(self):
+        """test_for_state_miss_colon"""
+        input= """procedure ABC ();
+            begin
+                for i= 1 downto 10 do g:=5;
+            end"""
+        expect='Error on line 3 col 21: ='
+        self.assertTrue(TestParser.test(input,expect,241))
+    def test_for_state_wrong_downto(self):
+        """test_for_state_wrong_downto"""
+        input= """procedure ABC ();
+            begin
+                for i:= 1 dwnto 10 do g:=5;
+            end"""
+        expect='Error on line 3 col 26: dwnto'
+        self.assertTrue(TestParser.test(input,expect,242))
+
 
 
 
