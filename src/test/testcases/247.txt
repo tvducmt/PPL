@@ -1,0 +1,4 @@
+procedure whilestate ();
+            begin
+                while a = true do b := 5; d := 24; d := 25; ;
+            end

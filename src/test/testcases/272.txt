@@ -1,0 +1,4 @@
+procedure compound_state();
+            begin
+                
+            end

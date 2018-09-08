@@ -1,0 +1,4 @@
+procedure whilestate ();
+            begin
+                while a = true do ;
+            end

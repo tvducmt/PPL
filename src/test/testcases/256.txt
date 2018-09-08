@@ -1,0 +1,4 @@
+procedure continue_state();
+            begin
+                for  a :=4 to 23 do  continue;
+            end

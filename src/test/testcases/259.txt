@@ -1,0 +1,4 @@
+procedure continue_state();
+            begin
+                while  a =4 do  coninue+fg**3;;
+            end

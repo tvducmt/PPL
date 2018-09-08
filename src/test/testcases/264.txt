@@ -1,0 +1,5 @@
+procedure with_state();
+            begin
+                with  do
+                    d = 34; 
+            end

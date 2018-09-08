@@ -369,35 +369,422 @@ class ParserSuite(unittest.TestCase):
             end"""
         expect='Error on line 3 col 26: dwnto'
         self.assertTrue(TestParser.test(input,expect,242))
+    def test_for_state_miss_assign(self):
+        """test_for_state_miss_assign"""
+        input= """procedure ABC ();
+            begin
+                for dwnto 10 do g:=5;
+            end"""
+        expect='Error on line 3 col 26: 10'
+        self.assertTrue(TestParser.test(input,expect,243))
+    def test_for_state_miss_stmt(self):
+        """test_for_state_miss_stmt"""
+        input= """procedure ABC ();
+            begin
+                for i:= 1 downto 10 do ;
+            end"""
+        expect='Error on line 3 col 39: ;'
+        self.assertTrue(TestParser.test(input,expect,244))
+    def test_for_state_many_stmt(self):
+        """test_for_state_many_stmt"""
+        input= """procedure ABC ();
+            begin
+                for i:= 1 downto 10 do a := 3; d := 5;
+                if color = red then
+                   a:=3;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,245))
+    def test_for_state_named(self):
+        """test_for_state_named"""
+        input= """procedure ABC ();
+            begin
+                for 123:= 1 downto 10 do a := 3; d := 5;
+            end"""
+        expect='Error on line 3 col 20: 123'
+        self.assertTrue(TestParser.test(input,expect,246))
+    #test while state
+    def test_while_state(self):
+        """test_while_tate"""
+        input= """procedure whilestate ();
+            begin
+                while a = true do b := 5; d := 24; d := 25; ;
+            end"""
+        expect='Error on line 3 col 42: d'
+        self.assertTrue(TestParser.test(input,expect,247))
+    def test_whilestate_many_stmt(self):
+        """test_whilestate_many_stmt"""
+        input= """procedure whilestate ();
+            begin
+                while a = true do b := 5; ;d := 24; d := 25;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,248))
+    def test_whilestate_wrong_expr(self):
+        """test_whilestate_wrong_expr"""
+        input= """procedure whilestate ();
+            begin
+                while a := true do b := 5;;
+            end"""
+        expect='Error on line 3 col 24: :='
+        self.assertTrue(TestParser.test(input,expect,249))
+    def test_whilestate_miss_body(self):
+        """test_whilestate_miss_body"""
+        input= """procedure whilestate ();
+            begin
+                while a = true do ;
+            end"""
+        expect='Error on line 3 col 34: ;'
+        self.assertTrue(TestParser.test(input,expect,250))
+    def test_whilestate_miss_expr(self):
+        """test_whilestate_miss_expr"""
+        input= """procedure whilestate ();
+            begin
+                while  do  s := 234;;
+            end"""
+        expect='Error on line 3 col 23: do'
+        self.assertTrue(TestParser.test(input,expect,251))
+    def test_whilestate_miss_semi(self):
+        """test_whilestate_miss_expr"""
+        input= """procedure whilestate ();
+            begin
+                while  a =4 do  s := 234;
+            end"""
+        expect='Error on line 4 col 12: end'
+        self.assertTrue(TestParser.test(input,expect,252))
+    #test break state
+    def test_break_state(self):
+        """test_break_state"""
+        input= """procedure break_state ();
+            begin
+                while  a =4 do  break;;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,253))
+    def test_break_state_miss_semi(self):
+        """test_break_state_miss_semi"""
+        input= """procedure break_state ();
+            begin
+                while  a =4 do  break;
+            end"""
+        expect='Error on line 4 col 12: end'
+        self.assertTrue(TestParser.test(input,expect,254))
+    def test_break_state_with_for(self):
+        """test_break_state_with_for"""
+        input= """procedure break_state ();
+            begin
+                for  a :=4 to 23 do  break;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,255))
+    #test continue state
+    def test_continue_state_withfor(self):
+        """test_continue_state_withfor"""
+        input= """procedure continue_state();
+            begin
+                for  a :=4 to 23 do  continue;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,256))
+    def test_continue_state_withwhile(self):
+        """test_continue_state_withwhile"""
+        input= """procedure continue_state();
+            begin
+                while  a =4 do  continue;;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,257))
+    def test_continue_state_miss_semi(self):
+        """test_continue_state_miss_semi"""
+        input= """procedure continue_state();
+            begin
+                while  a =4 do  continue;
+            end"""
+        expect='Error on line 4 col 12: end'
+        self.assertTrue(TestParser.test(input,expect,258))
+    def test_continue_state_wrong_stmt(self):
+        """test_continue_state_wrong_stmt"""
+        input= """procedure continue_state();
+            begin
+                while  a =4 do  coninue+fg**3;;
+            end"""
+        expect='Error on line 3 col 43: *'
+        self.assertTrue(TestParser.test(input,expect,259))
+    #test return_state
+    def test_return_state(self):
+        """test_return_state"""
+        input= """procedure return_state();
+            begin
+                return a=4;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,260))
+    def test_return_state_non_expr(self):
+        """test_return_state_non_expr"""
+        input= """procedure return_state();
+            begin
+                return ;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,261))
+    def test_return_state_miss_semi(self):
+        """test_return_state_non_expr"""
+        input= """procedure return_state();
+            begin
+                return 
+            end"""
+        expect='Error on line 4 col 12: end'
+        self.assertTrue(TestParser.test(input,expect,262))
+    #test with_state
+    def test_with_state(self):
+        """test_with_state"""
+        input= """procedure with_state();
+            begin
+                with a , b : integer ; c : array [ 1 .. 2 ] of real ; do
+                    d = 34; 
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,263))
+    def test_with_state_non_var(self):
+        """test_with_state_non_var"""
+        input= """procedure with_state();
+            begin
+                with  do
+                    d = 34; 
+            end"""
+        expect='Error on line 3 col 22: do'
+        self.assertTrue(TestParser.test(input,expect,264))
+    def test_with_state_one_var(self):
+        """test_with_state_one_var"""
+        input= """procedure with_state();
+            begin
+                with a , b : integer ;  do
+                    a = 34; 
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,265))
+    def test_with_state_wrong_declar(self):
+        """test_with_state_wrong_declar"""
+        input= """procedure with_state();
+            begin
+                with a , b  integer ;  do
+                    a = 34; 
+            end"""
+        expect='Error on line 3 col 28: integer'
+        self.assertTrue(TestParser.test(input,expect,266))
 
-
-
-
-
-
-
-
-
-
-
-
-
-    # def test_simple_program(self):
-    #     """Simple program: int main() {} """
-    #     input = """int main() {}"""
-    #     expect = "successful"
-    #     self.assertTrue(TestParser.test(input,expect,201))
-
-    # def test_more_complex_program(self):
-    #     """More complex program"""
-    #     input = """int main () {
-    #         putIntLn(4);
-    #     }"""
-    #     expect = "successful"
-    #     self.assertTrue(TestParser.test(input,expect,202))
+    #test call_state
+    def test_call_state_simple(self):
+        """test_call_state_simple"""
+        input= """procedure call_state();
+            begin
+                foo () ;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,267))
+    def test_call_state_many_para(self):
+        """test_call_state_many_para"""
+        input= """procedure call_state();
+            begin
+                foo (23+45, hello) ;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,268))
+    def test_call_state_complex(self):
+        """test_call_state_complex"""
+        input= """procedure call_state();
+            begin
+                foo ( 3 , a+1, m( 2 ) ) ;
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,269))
+    def test_call_state_miss_LB(self):
+        """test_call_state_miss_LB"""
+        input= """procedure call_state();
+            begin
+                foo ) ;
+            end"""
+        expect='Error on line 3 col 20: )'
+        self.assertTrue(TestParser.test(input,expect,270))
+    def test_call_state_miss_semi(self):
+        """test_call_state_miss_semi"""
+        input= """procedure call_state();
+            begin
+                foo () 
+            end"""
+        expect='Error on line 4 col 12: end'
+        self.assertTrue(TestParser.test(input,expect,271))
+    #test compound_state 
+    def test_compound_state(self):
+        """test_compound_state"""
+        input= """procedure compound_state();
+            begin
+                
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,272))
+    #test Built-in Functions
+    def test_getInt(self):
+        """test_getInt"""
+        input= """procedure built_in();
+            begin
+                getInt();
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,273))
+    def test_getInt_wrong_para(self):
+        """test_getInt"""
+        input= """procedure built_in();
+            begin
+                getInt(23.34);
+            end"""
+        expect='Error on line 3 col 23: 23.34'
+        self.assertTrue(TestParser.test(input,expect,274))
+    def test_putInt(self):
+        """test_putInt"""
+        input= """procedure built_in();
+            begin
+                putInt();
+            end"""
+        expect='Error on line 3 col 23: )'
+        self.assertTrue(TestParser.test(input,expect,275))
+    def test_putInt_wrong_para(self):
+        """test_putInt_wrong_para"""
+        input= """procedure built_in();
+            begin
+                putInt(23.34);
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,276))
+    def test_putIntLn(self):
+        """test_putIntLn"""
+        input= """procedure built_in();
+            begin
+                putIntLn();
+            end"""
+        expect='Error on line 3 col 25: )'
+        self.assertTrue(TestParser.test(input,expect,277))
+    def test_putIntLn_wrong_para(self):
+        """test_putIntLn_wrong_para"""
+        input= """procedure built_in();
+            begin
+                putIntLn(sdgfdfgg);
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,278))
+    def test_getFloat(self):
+        """test_getFloat"""
+        input= """procedure built_in();
+            begin
+                getFloat();
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,279))
+    def test_getFloat_wrong_para(self):
+        """test_getFloat_wrong_para"""
+        input= """procedure built_in();
+            begin
+                getFloat(sdgfdfgg);
+            end"""
+        expect='Error on line 3 col 25: sdgfdfgg'
+        self.assertTrue(TestParser.test(input,expect,280))
+    def test_putFloat(self):
+        """test_putFloat"""
+        input= """procedure built_in();
+            begin
+                putFloat(23.454);
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,281))
+    def test_putFloat_wrong_para(self):
+        """test_putFloat_wrong_para"""
+        input= """procedure built_in();
+            begin
+                putFloat();
+            end"""
+        expect='Error on line 3 col 25: )'
+        self.assertTrue(TestParser.test(input,expect,282))
+    def test_putFloatLn(self):
+        """test_putFloatln"""
+        input= """procedure built_in();
+            begin
+                putFloatLn(23.454);
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,283))
+    def test_putFloatln_wrong_para(self):
+        """test_putFloatln_wrong_para"""
+        input= """procedure built_in();
+            begin
+                putFloatLn();
+            end"""
+        expect='Error on line 3 col 27: )'
+        self.assertTrue(TestParser.test(input,expect,284))
     
-    # def test_wrong_miss_close(self):
-    #     """Miss ) int main( {}"""
-    #     input = """int main( {}"""
-    #     expect = "Error on line 1 col 10: {"
-    #     self.assertTrue(TestParser.test(input,expect,203))
+    def test_putBool(self):
+        """test_putBool"""
+        input= """procedure built_in();
+            begin
+                putBool(true);
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,285))
+    def test_putBool_wrong_para(self):
+        """test_putBool_wrong_para"""
+        input= """procedure built_in();
+            begin
+                putBool();
+            end"""
+        expect='Error on line 3 col 24: )'
+        self.assertTrue(TestParser.test(input,expect,286))
+
+    def test_putBoolLn(self):
+        """test_putBoolln"""
+        input= """procedure built_in();
+            begin
+                putFloatLn(false);
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,287))
+    def test_putBoolln_wrong_para(self):
+        """test_putBoolLn_wrong_para"""
+        input= """procedure built_in();
+            begin
+                putBoolLn();
+            end"""
+        expect='Error on line 3 col 26: )'
+        self.assertTrue(TestParser.test(input,expect,288))
+
+    def test_putString(self):
+        """test_putString"""
+        input= """procedure built_in();
+            begin
+                putString(abcdf);
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,289))
+
+    def test_putStringLn(self):
+        """test_putStringln"""
+        input= """procedure built_in();
+            begin
+                putStringLn(dffgfghg);
+            end"""
+        expect='successful'
+        self.assertTrue(TestParser.test(input,expect,290))
+    def test_putString_wrong_para(self):
+        """test_putBoolLn_wrong_para"""
+        input= """procedure built_in();
+            begin
+                putStringLn();
+            end"""
+        expect='Error on line 3 col 28: )'
+        self.assertTrue(TestParser.test(input,expect,292))
+    def test_putString_wrong_para(self):
+        """test_putString_wrong_para"""
+        input= """procedure built_in();
+            begin
+                putString();
+            end"""
+        expect='Error on line 3 col 26: )'
+        self.assertTrue(TestParser.test(input,expect,291))

@@ -1,0 +1,5 @@
+procedure with_state();
+            begin
+                with a , b : integer ;  do
+                    a = 34; 
+            end

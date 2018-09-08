@@ -1,0 +1,4 @@
+procedure built_in();
+            begin
+                putBool();
+            end

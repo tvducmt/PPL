@@ -35,12 +35,12 @@ for_state : FOR ID ASSIGN expr (TO|DOWNTO) expr DO stmt;
 while_state : WHILE expr DO stmt SEMI;
 break_state : BREAK SEMI;
 continue_state : CONTINUE SEMI;
-return_state : RETURN expr SEMI;
+return_state : RETURN expr? SEMI;
 with_state : WITH  varlist DO stmt;
 call_state : fullcall SEMI;
 
 fullcall: ID LB exprList RB ;
-
+//index_expr: expr LSB expr RSB;
 //Built-in function
 default_function: GETINT LB RB SEMI 
                 | PUTINT LB expr RB SEMI
@@ -108,7 +108,7 @@ expr4:  NOT expr4
      |  expr5;
 
 expr5: LB expr RB
-     | INTLIT | FLOATLIT | STRINGLIT | BOOLEANLIT | ID | fullcall;
+     | INTLIT | FLOATLIT | STRINGLIT | BOOLEANLIT | ID | fullcall;// | index_expr;
 
 
 
@@ -251,8 +251,9 @@ ID: ([a-zA-Z]|'_')([a-zA-Z0-9]|'_')*;
 
 
 //Error
-//fragment ESCAPE: '\\'('b'|'f'|'r'|'n'|'t'|'\''|'"'|'\\');
+fragment ESCAPE: '\\'('b'|'f'|'r'|'n'|'t'|'\''|'"'|'\\');
 //fragment ILLEGAL: ('\\'~('b'|'f'|'r'|'n'|'t'|'"'|'\\'|'\''));
+fragment ILLEGAL: ('\\'('b'|'f'|'r'|'n'|'t'|'"'|'\\'|'\''));
 fragment ESCAPE_CHAR:   '\\' 't' 
            |   '\\' 'n' 
            |	'\\' 'b'
@@ -260,12 +261,12 @@ fragment ESCAPE_CHAR:   '\\' 't'
            |	'\\' 'r'
            |	'\\' '"'
            |	'\\' '\\' ;
-ILLEGAL_ESCAPE: '"' .*? ('\b'|'\f'|'\r'|'\n'|'\t'|'"'|'\\'|'\'') {
-                                            s = IllegalEscape(self.text);
+ILLEGAL_ESCAPE: '"'(~[\n"\\]|ESCAPE)* ILLEGAL {
+                                            s = IllegalEscape(self.text[1:]);
                                             raise s;
                                         };
-UNCLOSE_STRING: '"' (~([\n\r]|'"')|ESCAPE_CHAR)* {
-                                            x = UncloseString(self.text);
+UNCLOSE_STRING: '"'(~[\n"\\]|ESCAPE)* {
+                                            x = UncloseString(self.text[1:]);
                                             raise x;
                                         };
 

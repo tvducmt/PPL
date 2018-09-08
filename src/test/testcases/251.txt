@@ -1,0 +1,4 @@
+procedure whilestate ();
+            begin
+                while  do  s := 234;;
+            end

@@ -95,11 +95,13 @@ class LexerSuite(unittest.TestCase):
     def test_stringlit(self):
         """test stringlit"""
         #self.assertTrue(TestLexer.test(' "hello" ','"hello",<EOF>',140))
+        self.assertTrue(TestLexer.test('"hell okkk asd"',"""Unclosed String: hell	 okkk asd""",140))
         #self.assertTrue(TestLexer.test(' "hello i am duc" ','"hello i am duc",<EOF>',140))
         #self.assertTrue(TestLexer.test(""""abc""",'Unclosed String: "abc',141))
         #self.assertTrue(TestLexer.test(""""edf
          #                                abc" ""","""Illegal Escape In String: "edf""",142))
-        self.assertTrue(TestLexer.test(""""string\t123" ""","""Unclosed String: "string	123'""",143))
+      #  self.assertTrue(TestLexer.test(""" "string  
+       # 123" """,'Illegal Escape In String: "string',143))
         #self.assertTrue(TestLexer.test('"string\t123','Unclosed String: "string	123',144))
     #    self.assertTrue(TestLexer.test(" - 8000","-,8000,<EOF>",138))
     #    self.assertTrue(TestLexer.test(" --8000","-,-,8000,<EOF>",139))
