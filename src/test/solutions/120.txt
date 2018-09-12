@@ -1,2 +1,1 @@
-1.      6
-,<EOF>
+not,hey,or,mod,<EOF>

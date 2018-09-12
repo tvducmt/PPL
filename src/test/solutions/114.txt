@@ -1,1 +1,1 @@
-break,else,return,false,abdf,<EOF>
+input,<EOF>

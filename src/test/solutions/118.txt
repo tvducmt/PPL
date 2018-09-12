@@ -1,4 +1,1 @@
-a      51
-,=      24
-,1000      7
-,<EOF>
+continue,for,to,downto,CoNtinuE,<EOF>

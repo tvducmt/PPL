@@ -1,1 +1,1 @@
-true false hello
+a=1000

@@ -1,2 +1,1 @@
-//sdgdfg (*hello*)
-            comment the single line
+(*comment ne )*nest ne*) end *) abcxyz

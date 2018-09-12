@@ -1,1 +1,2 @@
-{*comment // comment line*} input
+//sdgdfg (*hello*)
+            comment the single line

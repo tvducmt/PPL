@@ -1,4 +1,5 @@
-procedure built_in();
+procedure index_expr();
+         
             begin
-                putStringLn();
+              c := a[3];
             end

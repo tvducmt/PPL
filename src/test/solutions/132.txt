@@ -1,1 +1,1 @@
-true,false,hello,<EOF>
+-,+,+,+,+,+,+,1000,<EOF>

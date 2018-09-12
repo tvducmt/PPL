@@ -1,1 +1,1 @@
-comment,the,single,line,<EOF>
+end,*,),abcxyz,<EOF>

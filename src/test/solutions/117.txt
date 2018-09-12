@@ -1,13 +1,1 @@
-integer      1
-,a      51
-,[      12
-,5      7
-,]      13
-,;      11
-,There      51
-,are      51
-,many      51
-,,      14
-,people      51
-,..      15
-,<EOF>
+BreaK,break,return,<EOF>

@@ -1,4 +1,1 @@
-breaK      34
-,Else      42
-,return      43
-,<EOF>
+int,main,<EOF>

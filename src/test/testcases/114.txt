@@ -1,1 +1,1 @@
-break else return false abdf
+{*comment // comment line*} input

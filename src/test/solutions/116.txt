@@ -1,6 +1,1 @@
-continue      35
-,for      36
-,to      55
-,downto      38
-,CoNtinuE      35
-,<EOF>
+break,else,return,false,abdf,<EOF>

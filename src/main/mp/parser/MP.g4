@@ -9,8 +9,8 @@ options{
 }
 //Parser--------------------------------------------------
 
-program  : (many_declare)+ EOF;
-many_declare : variable_declare | function_declare | procedure_declare;
+program  : declare+ EOF;
+declare : variable_declare | function_declare | procedure_declare;
 variable_declare : VAR varlist ;    
 varlist : variable SEMI (varlist)*;
 variable : idlist COLON vartype;
@@ -18,7 +18,7 @@ idlist : ID (COMMA idlist)*;
 vartype : primitive_type | compound_type ;
 primitive_type: INTTYPE | STRINGTYPE | BOOLEANTYPE | REALTYPE ;
 compound_type: ARRAY LSB  INTLIT DD INTLIT  RSB OF primitive_type;
-function_declare : FUNCTION ID LB parameterlist RB COLON vartype SEMI variable_declare compound_state;
+function_declare : FUNCTION ID LB parameterlist RB COLON vartype SEMI variable_declare? compound_state;
 parameterlist : variable  parameterl | ;
 parameterl : SEMI variable parameterl | ;
 procedure_declare : PROCEDURE ID LB parameterlist RB SEMI variable_declare? compound_state;
@@ -29,10 +29,10 @@ stmt:   exprStmt
             | while_state | break_state | continue_state
             | return_state | call_state | compound_state | with_state|default_function;
 
-assign_state : (ID ASSIGN (ID)*)+ expr SEMI;
+assign_state : (ID|expr5) COLON EQUAL (ID COLON EQUAL)* expr SEMI;
 if_state : IF expr THEN stmt (ELSE stmt)?;
-for_state : FOR ID ASSIGN expr (TO|DOWNTO) expr DO stmt;
-while_state : WHILE expr DO stmt SEMI;
+for_state : FOR ID COLON EQUAL expr (TO|DOWNTO) expr DO stmt;
+while_state : WHILE expr DO stmt;
 break_state : BREAK SEMI;
 continue_state : CONTINUE SEMI;
 return_state : RETURN expr? SEMI;
@@ -40,7 +40,10 @@ with_state : WITH  varlist DO stmt;
 call_state : fullcall SEMI;
 
 fullcall: ID LB exprList RB ;
+//expr5
 //index_expr: expr LSB expr RSB;
+//expr6 LSB expr RSB
+  //   | expr6;
 //Built-in function
 default_function: GETINT LB RB SEMI 
                 | PUTINT LB expr RB SEMI
@@ -106,9 +109,10 @@ expr3: expr3 DIVISION expr4
 expr4:  NOT expr4
      |  SUBORNE expr4
      |  expr5;
-
-expr5: LB expr RB
-     | INTLIT | FLOATLIT | STRINGLIT | BOOLEANLIT | ID | fullcall;// | index_expr;
+expr5: expr6 LSB expr RSB
+   | expr6;
+expr6: LB expr RB
+     | INTLIT | FLOATLIT | STRINGLIT | BOOLEANLIT | ID | fullcall;
 
 
 
@@ -116,24 +120,23 @@ expr5: LB expr RB
 
 //Type
 
-INTTYPE: 'integer' ;
+INTTYPE: ('i'|'I')('n'|'N')('t'|'T')('e'|'E')('g'|'G')('e'|'E')('r'|'R');
 
-STRINGTYPE: 'string';
+STRINGTYPE: ('s'|'S')('t'|'T')('i'|'I')('n'|'N')('G'|'g');
 
-BOOLEANTYPE: 'boolean';
+BOOLEANTYPE: ('B'|'b')('O'|'o')('O'|'o')('L'|'l')('E'|'e')('a'|'A')('n'|'N');
 
-REALTYPE: 'real';
+REALTYPE: ('r'|'R')('e'|'E')('a'|'A')('l'|'L'|);
 
 BOOLEANLIT: TRUE | FALSE;
  
 
 
 
-STRINGLIT: '"' ~('\b'|'\f'|'\r'|'\n'|'\t'|'\''|'"'|'\\')* '"';
-                                        // {
-                                        //     s = self.text;
-                                        //     raise s;
-                                        // };
+STRINGLIT: '"' ~('\b'|'\f'|'\r'|'\n'|'\t'|'\''|'"'|'\\')* '"'{
+                                              self.text= self.text.strip('"');
+                                             
+                                         };
 
     
 fragment Nguyen: [0-9]+;
@@ -148,9 +151,9 @@ INTLIT: [0-9]+;
 
 
 //Seperator
-seperators: LSB | RSB | COLON | LB | RB | SEMI | COMMA | DD | ASSIGN;
+seperators: LSB | RSB | COLON | LB | RB | SEMI | COMMA | DD ;
 
-ASSIGN: ':=';
+//ASSIGN: ':=';
 
 COLON: ':';
 
@@ -239,7 +242,7 @@ WITH: ('W'|'w')('i'|'I')('T'|'t')('H'|'h');
 //comment
 fragment TranditionalBlockComment:  '(*' .*? '*)';
 fragment SingleLineComment : '//' ~('\r' | '\n')* ;
-fragment BlockComment : '{*' .*? '*}';
+fragment BlockComment : '{' .*? '}';
 COMMENTS: (SingleLineComment | TranditionalBlockComment | BlockComment)+ ->skip ;
 
 //ID
