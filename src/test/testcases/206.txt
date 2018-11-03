@@ -1,5 +1,0 @@
-function foo (a , b : integer  ;) : array [ 1 .. 2 ] of integer ;
-            var x , y : real ; 
-            begin
-            
-            end

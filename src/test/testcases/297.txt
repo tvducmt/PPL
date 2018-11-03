@@ -1,4 +1,0 @@
-procedure index_expr();
-            begin
-             foo(2)[3+x] := a[b[2]] +3;
-            end

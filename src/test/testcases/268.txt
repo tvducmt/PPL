@@ -1,5 +1,0 @@
-procedure call_state();
-        var x , y : real ; 
-            begin
-                foo (23+45, hello) ;
-            end

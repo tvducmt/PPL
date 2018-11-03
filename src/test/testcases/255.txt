@@ -1,5 +1,0 @@
-procedure break_state ();
-        var x , y : real ; 
-            begin
-                for  a :=4 to 23 do  break;
-            end

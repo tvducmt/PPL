@@ -1,5 +1,0 @@
-procedure whilestate ();
-        var x , y : real ; 
-            begin
-                while a := true do b := 5;;
-            end

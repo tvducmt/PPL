@@ -1,0 +1,1 @@
+Program([FuncDecl(Id(foo),[],IntType,[],[For(Id(i)StringLiteral(1),IntLiteral(10),True,[AssignStmt(Id(g),IntLiteral(5))])])])

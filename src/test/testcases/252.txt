@@ -1,5 +1,0 @@
-procedure whilestate ();
-        var x , y : real ; 
-            begin
-                while  a =4 do  s := 234;
-            end
