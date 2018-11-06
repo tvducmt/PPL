@@ -1,1 +1,1 @@
-Program([FuncDecl(Id(ABC),[VarDecl(Id(f),IntType)],[],[],[AssignStmt(Id(f),IntLiteral(5))])])
+Program([FuncDecl(Id(ABC),[VarDecl(Id(f),IntType),VarDecl(Id(a),ArrayType(-3,4,IntType))],[],[],[AssignStmt(Id(f),ArrayCell(Id(a),IntLiteral(1)))])])

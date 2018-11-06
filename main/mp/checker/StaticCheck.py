@@ -24,9 +24,6 @@ class Symbol:
 
 class StaticChecker(BaseVisitor,Utils):
 
-    # global_envi = [Symbol("getInt",MType([],IntType())),
-    # 			   Symbol("putIntLn",MType([IntType()],VoidType()))]
-            
     global_envi =   [Symbol("getInt",MType([],IntType())),
                     Symbol("putInt",MType([IntType()],VoidType())),
                     Symbol("putIntLn",MType([IntType()],VoidType())),
@@ -106,7 +103,7 @@ class StaticChecker(BaseVisitor,Utils):
         if (type(lhs),type(rhs)) == (FloatType,IntType):
             return True
         else:
-            if isinstance(type(lhs), type(rhs)):
+            if type(lhs) == type(rhs):
                 return True
             else:
                 return False
@@ -120,26 +117,34 @@ class StaticChecker(BaseVisitor,Utils):
             if lhSymbol.mtype == (StringType or ArrayType):
                 raise TypeMismatchInStatement(ast)
             else:
-               
                 if not self.checkType(lhSymbol.mtype, exp):
                     raise TypeMismatchInStatement(ast)
                 else:
                     return 
-    def visitIf(self, ast, c):
-        ifExp = self.visit(ast.expr, c)
-        if ifExp != BoolType :
-            raise TypeMismatchInStatement(ast)
 
-    def visitFor(self, ast, c):
+    def visitIf(self, ast, c): # oked
+        ifExp = self.visit(ast.expr, c)
+        if type(ifExp) != BoolType :
+            raise TypeMismatchInStatement(ast)
+        [self.visit(x, c) for x in ast.thenStmt]
+        if ast.elseStmt is not None:
+            [self.visit(y, c) for y in ast.elseStmt]
+
+    def visitFor(self, ast, c): # oked
+        idType = self.visit(ast.id, c)
         expr1 = self.visit(ast.expr1, c)
         expr2 = self.visit(ast.expr2, c)
-        if expr1 != IntType or expr2 != IntType:
+        if idType != expr1 or idType != expr2 or expr1 != IntType or expr2 != IntType:
             raise TypeMismatchInStatement(ast)
-    
+        else:
+            [self.visit(x, c) for x in ast.loop]
+
     def visitWhile(self, ast, c):
         Expr = self.visit(ast.Expr, c)
         if Expr != BoolType :
             raise TypeMismatchInStatement(ast)
+        else:
+            [self.visit(x, c) for x in ast.sl]
 
     def visitReturn(self, ast, c):
         for x in c:
@@ -164,7 +169,7 @@ class StaticChecker(BaseVisitor,Utils):
     def visitBinaryOp(self, ast, c):
         left = self.visit(ast.left, c)
         right = self.visit(ast.right, c)
-        if ast.op == ('*' or '+' or '-' or '/'):
+        if ast.op == '*' or ast.op == '+' or ast.op == '-' or ast.op == '/':
             if (left, right) == (IntType(), IntType()):
                 return IntType()
             elif (left, right) == (IntType(), FloatType()):
@@ -175,7 +180,7 @@ class StaticChecker(BaseVisitor,Utils):
                 return FloatType()
             else:
                 raise TypeMismatchInExpression(ast)
-        elif ast.op == ('<' or '<=' or '>' or  '>=' or  '<>'):
+        elif ast.op == '<' or ast.op == '<=' or ast.op == '>' or ast.op == '>=' or ast.op == '<>' :
             if (left, right) == (IntType(), IntType()):
                 return BoolType()
             elif (left, right) == (IntType(), FloatType()):
@@ -199,21 +204,23 @@ class StaticChecker(BaseVisitor,Utils):
                 return StringType()
             else:
                 raise TypeMismatchInExpression(ast)
-        elif ast.op == ('div' or 'mod'):
+        elif ast.op == 'div' or ast.op == 'mod':
             if (left, right) == (IntType(), IntType()):
                 return IntType()
             else:
                 raise TypeMismatchInExpression(ast)
-        elif ast.op == ('and' or 'or'):
+        elif ast.op == 'and' or ast.op == 'or':
             if (left, right) == (BoolType(), BoolType()):
                 return BoolType()
             else:
                 raise TypeMismatchInExpression(ast)
-        elif ast.op == ('andthen' or 'orelse'):
+        elif ast.op == 'andthen' or  ast.op == 'orelse':
             if (left, right) == (BoolType(), BoolType()):
                 return BoolType()
             else:
                 raise TypeMismatchInExpression(ast)
+        else:
+            print("sdgf1")
 
     def UnaryOp(self, ast, c):
         if ast.op == 'not':
@@ -240,6 +247,14 @@ class StaticChecker(BaseVisitor,Utils):
         else:
             return res.mtype.rettype
 
+    def visitArrayCell(self, ast, c):
+        arrType = self.visit(ast.arr, c)
+        idx = self.visit(ast.idx, c)
+        if type(arrType) != ArrayType or type(idx) != IntType:
+           TypeMismatchInExpression(ast)
+        else:
+            return arrType.eleType
+
     def visitIntLiteral(self,ast, c): 
         return IntType()
 
@@ -253,6 +268,12 @@ class StaticChecker(BaseVisitor,Utils):
         return StringType()
 
     def visitId(self, ast, c):
-        if  not self.lookup(ast.name, c, lambda x: x.name):
+        symbol = self.lookup(ast.name, c, lambda x: x.name) 
+        if  not symbol:
             raise Undeclared(Identifier(), ast.name)
-       
+        else:
+            if  (isinstance(symbol.mtype, MType)):
+                raise Undeclared(Identifier(), ast.name)
+            else:
+                return symbol.mtype
+

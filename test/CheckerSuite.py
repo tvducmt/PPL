@@ -73,7 +73,7 @@ class CheckerSuite(unittest.TestCase):
     #     self.assertTrue(TestChecker.test(input,expect,408))
     # def test_diff_funcdec1(self):
     #     """More complex program"""
-    #     input = Program([FuncDecl(Id("foo"),[],[],[For(Id('i'),StringLiteral('1'),IntLiteral(10),(True),[Assign(Id('g'),IntLiteral(5))])], IntType())])
+    #     input = Program([FuncDecl(Id("foo"),[],[VarDecl(Id('x'),IntType())],[For(Id('x'),StringLiteral('1'),IntLiteral(10),(True),[Assign(Id('g'),IntLiteral(5))])], IntType())])
                         
     #     expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
     #     self.assertTrue(TestChecker.test(input,expect,409))
@@ -85,13 +85,13 @@ class CheckerSuite(unittest.TestCase):
     #     expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
     #     self.assertTrue(TestChecker.test(input,expect,410))
     
-    def test_diff_funcdec1(self):
-        """More complex program"""
-        input = Program([
-                FuncDecl(Id("ABC"),[VarDecl(Id('b'),FloatType())],[],[Return((IntLiteral(200)))]) ])
+    # def test_diff_funcdec1(self):
+    #     """More complex program"""
+    #     input = Program([
+    #             FuncDecl(Id("ABC"),[VarDecl(Id('a'),IntType())],[],[If(BinaryOp('>',Id('a'),IntLiteral(1)),[Assign(Id('a'),IntLiteral(1))],[If(BinaryOp('>',Id('a'),IntLiteral(1)),[Assign(Id('a'),IntLiteral(1))],[])])]) ])
                         
-        expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
-        self.assertTrue(TestChecker.test(input,expect,411))
+    #     expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
+    #     self.assertTrue(TestChecker.test(input,expect,411))
     #def test_diff_funcdec1(self):
     #     """More complex program"""
     #     input = Program([
@@ -100,3 +100,13 @@ class CheckerSuite(unittest.TestCase):
                         
     #     expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
     #     self.assertTrue(TestChecker.test(input,expect,408))
+    def test_diff_funcdec1(self):
+        """More complex program"""
+        input = Program([
+               
+                FuncDecl(Id("ABC"),[VarDecl(Id('f'),IntType()), VarDecl(Id('a'), ArrayType(-3,4, IntType()))],[],[Assign(Id('f'),ArrayCell(Id('a'),IntLiteral(1)))],[])])
+                        
+        expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
+        self.assertTrue(TestChecker.test(input,expect,408))
+
+    
