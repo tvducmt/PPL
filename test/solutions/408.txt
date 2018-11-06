@@ -1,1 +1,1 @@
-Type Mismatch In Statement: AssignStmt(Id(f),IntLiteral(5))
+Redeclared Procedure: ABC

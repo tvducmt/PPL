@@ -24,8 +24,6 @@ class Symbol:
 
 class StaticChecker(BaseVisitor,Utils):
 
-    # global_envi = [Symbol("getInt",MType([],IntType())),
-    # 			   Symbol("putIntLn",MType([IntType()],VoidType()))]
             
     global_envi =   [Symbol("getInt",MType([],IntType())),
                     Symbol("putInt",MType([IntType()],VoidType())),
@@ -46,9 +44,6 @@ class StaticChecker(BaseVisitor,Utils):
     def check(self):
         return self.visit(self.ast,StaticChecker.global_envi)
     
-    # def checkRedeclared(self, name, kind, evn):
-    #     if self.lookup(name, evn, lambda x: x.name):
-    #         raise Redeclared(kind, sym.name)
     def getName(self, decl):
         return decl.variable.name if isinstance(decl, VarDecl) else  decl.name.name
     
@@ -95,36 +90,47 @@ class StaticChecker(BaseVisitor,Utils):
     
         for u in ast.local:
             if self.lookup(u.variable.name, scopeFuncDecl, lambda x: x.name):
-                raise Redeclared(self.getType(u), u.variable.name)
+                raise Redeclared(Variable(), u.variable.name)
             else:
                 scopeFuncDecl.insert(0, Symbol(u.variable.name, u.varType))
         scopeFuncDecl=scopeFuncDecl+ c
         #print([self.visit(x,scopeFuncDecl) for x in ast.body])
-        return [self.visit(x,scopeFuncDecl) for x in ast.body]
-        
-    def checkType(self, lhs, rhs):
-        if (type(lhs),type(rhs)) == (FloatType,IntType):
-            return True
+        return [self.visit(x,(scopeFuncDecl, True)) for x in ast.body]
+    
+ 
+    def visitCallExpr(self, ast, c):
+        at = [self.visit(x,(c[0],False)) for x in ast.param]
+        print(at)
+        res = self.lookup(ast.method.name,c[0],lambda x: x.name)
+        if res is None or not type(res.mtype) is MType or not type(res.mtype.rettype) is VoidType:
+            raise Undeclared(Procedure(),ast.method.name)
+        elif len(res.mtype.partype) != len(at):
+            raise TypeMismatchInExpression(ast)            
         else:
-            if isinstance(type(lhs), type(rhs)):
-                return True
-            else:
-                return False
-        
-  
-    def visitIntLiteral(self,ast, c): 
-        return IntType()
-
-    def visitFloatLiteral(self, ast, c):
-        return FloatType()
+            return res.mtype.rettype
     
-    def visitBooleanLiteral(self, ast, c):
-        return BoolType()
-    
-    def visitStringLiteral(self, ast, c):
-        return StringType()
+#     def checkType(self, lhs, rhs):
+#         if (type(lhs),type(rhs)) == (FloatType,IntType):
+#             return True
+#         else:
+#             if isinstance(type(lhs), type(rhs)):
+#                 return True
+#             else:
+#                 return False
 
-    def visitId(self, ast, c):
-        if  not self.lookup(ast.name, c, lambda x: x.name):
-            raise Undeclared(Identifier(), ast.name)
+#     def visitIntLiteral(self,ast, c): 
+#         return IntType()
+
+#     def visitFloatLiteral(self, ast, c):
+#         return FloatType()
+    
+#     def visitBooleanLiteral(self, ast, c):
+#         return BoolType()
+    
+#     def visitStringLiteral(self, ast, c):
+#         return StringType()
+
+#     def visitId(self, ast, c):
+#         if  not self.lookup(ast.name, c, lambda x: x.name):
+#             raise Undeclared(Identifier(), ast.name)
        

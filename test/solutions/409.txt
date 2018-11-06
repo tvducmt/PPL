@@ -1,1 +1,1 @@
-Type Mismatch In Statement: For(Id(i)StringLiteral(1),IntLiteral(10),True,[AssignStmt(Id(g),IntLiteral(5))])
+Type Mismatch In Expression: CallExpr(Id(abc),[IntLiteral(2)])
