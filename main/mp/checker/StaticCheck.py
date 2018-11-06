@@ -145,22 +145,21 @@ class StaticChecker(BaseVisitor,Utils):
         for x in c:
             if isinstance(x.mtype,MType):
                 break;
-        print(x.mtype.rettype)
-        if ast.expr is None and x.mtype.rettype == VoidType:
-            print ("sddfgjfjbds")
+        
+        if ast.expr is None and x.mtype.rettype == VoidType():
             return None
-        elif ast.expr is None and x.mtype.rettype != VoidType:
-            print("vao day")
+        elif ast.expr is None and x.mtype.rettype == VoidType():
             raise TypeMismatchInStatement(ast)
         else:
-
-           
+            returnType = x.mtype.rettype
             returnExp = self.visit(ast.expr, c)
-
-        # for i in c:
-        #     print(i.mtype.rettype)
-        # print(returnType)
-        
+            if (returnType ,returnExp) == (FloatType,IntType):
+                return None
+            else:
+                if returnType == returnExp:
+                    return None
+                else:
+                    raise TypeMismatchInStatement(ast)
 
     def visitBinaryOp(self, ast, c):
         left = self.visit(ast.left, c)

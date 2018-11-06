@@ -88,7 +88,7 @@ class CheckerSuite(unittest.TestCase):
     def test_diff_funcdec1(self):
         """More complex program"""
         input = Program([
-                FuncDecl(Id("ABC"),[VarDecl(Id('b'),FloatType())],[],[Return((IntLiteral(200)))])])
+                FuncDecl(Id("ABC"),[VarDecl(Id('b'),FloatType())],[],[Return((IntLiteral(200)))]) ])
                         
         expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
         self.assertTrue(TestChecker.test(input,expect,411))
