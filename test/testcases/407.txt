@@ -1,1 +1,1 @@
-Program([FuncDecl(Id(ABC),[VarDecl(Id(b),FloatType)],VoidType(),[],[AssignStmt(Id(b),IntLiteral(1))])])
+Program([FuncDecl(Id(abc),[],VoidType(),[],[For(Id(a)BooleanLiteral(1),FloatLiteral(5),False,[For(Id(b)BooleanLiteral(1),FloatLiteral(5),False,[])])])])

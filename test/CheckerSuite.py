@@ -63,23 +63,42 @@ class CheckerSuite(unittest.TestCase):
     #     expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
         #self.assertTrue(TestChecker.test(input,expect,407))
 # FuncDecl(Id("Abc"),[VarDecl(Id('k'),IntType())],[],[]),
-    def test_wrong_name(self):
+    # def test_wrong_name(self):
+    #     """More complex program"""
+    #     input = Program([
+    #          FuncDecl(Id("abcd"),[VarDecl(Id('a'),IntType()), VarDecl(Id('b'),IntType())],[],[]),
+    #          FuncDecl(Id("ABC"),[],[],[CallExpr(Id('abc'),[IntLiteral(1),IntLiteral(2)])])])
+                        
+    #     expect = "Undeclared Procedure: ABC"
+    #     self.assertTrue(TestChecker.test(input,expect,408))
+    # def test_wrong_String_type(self):
+    #     """More complex program"""
+    #     input = Program([
+    #          FuncDecl(Id("abc"),[],[],[For(Id('a') ,Id('b'),IntLiteral(1),False,[])])])         
+    #     expect = "Type Mismatch In Statement: For(Id(a)Id(b),IntLiteral(1),False,[])"
+    #     self.assertTrue(TestChecker.test(input,expect,407))
+    
+    # def test_wrong_Float_type(self):
+    #     """More complex program"""
+    #     input = Program([
+    #          FuncDecl(Id("foo"),[],[],[For(Id('a'), IntLiteral(1), FloatLiteral(5),False,[])])])         
+    #     expect = "Type Mismatch In Statement: For(Id(a)IntLiteral(1),FloatLiteral(5),False,[])"
+    #     self.assertTrue(TestChecker.test(input,expect,408))
+
+    def test_wrong_Bool_type(self):
         """More complex program"""
         input = Program([
-             FuncDecl(Id("abcd"),[VarDecl(Id('a'),IntType()), VarDecl(Id('b'),IntType())],[],[]),
-             FuncDecl(Id("ABC"),[],[],[CallExpr(Id('abc'),[IntLiteral(1),IntLiteral(2)])])])
-                        
-        expect = "Undeclared Procedure: ABC"
-        self.assertTrue(TestChecker.test(input,expect,408))
-    def test_miss_parameter(self):
-        """More complex program"""
-        input = Program([
-             FuncDecl(Id("abc"),[VarDecl(Id('a'),IntType()), VarDecl(Id('b'),IntType())],[],[]),
-             FuncDecl(Id("ABC"),[],[],[CallExpr(Id('abc'),[IntLiteral(2)])])])
-                        
-        expect = "Type Mismatch In Expression: CallExpr(Id(abc),[IntLiteral(2)])"
-        self.assertTrue(TestChecker.test(input,expect,409))
-    # def test_duplicate_parameter(self):
+             FuncDecl(Id("abc"),[],[],[For(Id('a'), BooleanLiteral(1), FloatLiteral(5),False,[For(Id('b'), BooleanLiteral(1), FloatLiteral(5),False,[])])])])         
+        expect = "Type Mismatch In Statement: For(Id(a)BooleanLiteral(1),FloatLiteral(5),False,[])"
+        self.assertTrue(TestChecker.test(input,expect,407))
+    
+    # def test_wrong_type(self):
+    #     """More complex program"""
+    #     input = Program([
+    #          FuncDecl(Id("abc"),[],[],[For(Id('a'),Id('b'),IntLiteral(1),False,[])])])         
+    #     expect = "Type Mismatch In Statement: For(Id(a)Id(b),IntLiteral(1),False,[])"
+    #     self.assertTrue(TestChecker.test(input,expect,409))
+    # # def test_duplicate_parameter(self):
     #     """More complex program"""
     #     input = Program([
     #             FuncDecl(Id("ABC"),[],[VarDecl(Id('a'),IntType()), VarDecl(Id('a'),IntType())],[])])

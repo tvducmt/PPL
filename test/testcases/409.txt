@@ -1,1 +1,1 @@
-Program([FuncDecl(Id(abc),[VarDecl(Id(a),IntType),VarDecl(Id(b),IntType)],VoidType(),[],[]),FuncDecl(Id(ABC),[],VoidType(),[],[CallExpr(Id(abc),[IntLiteral(2)])])])
+Program([FuncDecl(Id(abc),[],VoidType(),[],[For(Id(a)Id(b),IntLiteral(1),False,[])])])

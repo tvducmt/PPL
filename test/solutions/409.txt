@@ -1,1 +1,1 @@
-Type Mismatch In Expression: CallExpr(Id(abc),[IntLiteral(2)])
+Redeclared Procedure: abc

@@ -98,17 +98,31 @@ class StaticChecker(BaseVisitor,Utils):
         return [self.visit(x,(scopeFuncDecl, True)) for x in ast.body]
     
  
-    def visitCallExpr(self, ast, c):
-        at = [self.visit(x,(c[0],False)) for x in ast.param]
-        print(at)
-        res = self.lookup(ast.method.name,c[0],lambda x: x.name)
-        if res is None or not type(res.mtype) is MType or not type(res.mtype.rettype) is VoidType:
-            raise Undeclared(Procedure(),ast.method.name)
-        elif len(res.mtype.partype) != len(at):
-            raise TypeMismatchInExpression(ast)            
-        else:
-            return res.mtype.rettype
+   
     
+    def visitFor(self, ast, c):
+        expr1 = self.visit(ast.expr1, c)
+        expr2 = self.visit(ast.expr2, c)
+        
+        if expr1 != IntType or expr2 != IntType:
+            raise TypeMismatchInStatement(ast)
+        for i in ast.loop:
+            expr1 = self.visit(ast.expr1, c)
+            expr2 = self.visit(ast.expr2, c)
+            if expr1 != IntType or expr2 != IntType:
+                raise TypeMismatchInStatement(ast)
+    # def visitIntLiteral(self,ast, c): 
+    #     return IntType()
+
+    # def visitFloatLiteral(self, ast, c):
+    #     return FloatType()
+    
+    # def visitBooleanLiteral(self, ast, c):
+    #     return BoolType()
+    
+    # def visitStringLiteral(self, ast, c):
+    #     return StringType()
+
 #     def checkType(self, lhs, rhs):
 #         if (type(lhs),type(rhs)) == (FloatType,IntType):
 #             return True
@@ -118,18 +132,7 @@ class StaticChecker(BaseVisitor,Utils):
 #             else:
 #                 return False
 
-#     def visitIntLiteral(self,ast, c): 
-#         return IntType()
-
-#     def visitFloatLiteral(self, ast, c):
-#         return FloatType()
-    
-#     def visitBooleanLiteral(self, ast, c):
-#         return BoolType()
-    
-#     def visitStringLiteral(self, ast, c):
-#         return StringType()
-
+   
 #     def visitId(self, ast, c):
 #         if  not self.lookup(ast.name, c, lambda x: x.name):
 #             raise Undeclared(Identifier(), ast.name)
