@@ -1,1 +1,1 @@
-Program([FuncDecl(Id(foo),[],IntType,[VarDecl(Id(x),IntType)],[For(Id(x)StringLiteral(1),IntLiteral(10),True,[AssignStmt(Id(g),IntLiteral(5))])])])
+Program([FuncDecl(Id(main),[],VoidType(),[VarDecl(Id(x),IntType)],[For(Id(x)IntLiteral(1),IntLiteral(10),True,[Continue])])])

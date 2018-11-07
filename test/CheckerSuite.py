@@ -71,12 +71,12 @@ class CheckerSuite(unittest.TestCase):
                         
     #     expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
     #     self.assertTrue(TestChecker.test(input,expect,408))
-    # def test_diff_funcdec1(self):
-    #     """More complex program"""
-    #     input = Program([FuncDecl(Id("foo"),[],[VarDecl(Id('x'),IntType())],[For(Id('x'),StringLiteral('1'),IntLiteral(10),(True),[Assign(Id('g'),IntLiteral(5))])], IntType())])
+    def test_diff_funcdec1(self):
+        """More complex program"""
+        input = Program([FuncDecl(Id("main"),[],[VarDecl(Id('x'),IntType())],[For(Id('x'),IntLiteral(1),IntLiteral(10),(True),[Continue()])] )])
                         
-    #     expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
-    #     self.assertTrue(TestChecker.test(input,expect,409))
+        expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
+        self.assertTrue(TestChecker.test(input,expect,409))
 
     # def test_diff_funcdec1(self):
     #     """More complex program"""
@@ -100,13 +100,15 @@ class CheckerSuite(unittest.TestCase):
                         
     #     expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
     #     self.assertTrue(TestChecker.test(input,expect,408))
-    def test_diff_funcdec1(self):
-        """More complex program"""
-        input = Program([
-               
-                FuncDecl(Id("ABC"),[VarDecl(Id('f'),IntType()), VarDecl(Id('a'), ArrayType(-3,4, IntType()))],[],[Assign(Id('f'),ArrayCell(Id('a'),IntLiteral(1)))],[])])
+    # def test_diff_funcdec1(self):
+    #     """More complex program"""
+    #     input = Program([
+    #            FuncDecl(Id("main"),[VarDecl(Id('f'),IntType())],[],[Assign(Id('f'),IntLiteral(5)), Continue()])
+    #            # FuncDecl(Id("mais"),[VarDecl(Id('f'),IntType()), VarDecl(Id('a'), ArrayType(-3,4, IntType()))],[],[Assign(Id('k'),ArrayCell(Id('a'),IntLiteral(1)))]),
+    #             #VarDecl(Id('k'),StringType())
+    #             ])
                         
-        expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
-        self.assertTrue(TestChecker.test(input,expect,408))
+    #     expect = "Type Mismatch In Statement: CallStmt(Id(getInt),[])"
+    #     self.assertTrue(TestChecker.test(input,expect,408))
 
     
