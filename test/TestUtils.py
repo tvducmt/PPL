@@ -11,19 +11,19 @@ from lexererr import *
 from ASTGeneration import ASTGeneration
 from StaticCheck import StaticChecker
 from StaticError import *
-"""from CodeGenerator import CodeGenerator
+from CodeGenerator import CodeGenerator
 import subprocess
-"""
-JASMIN_JAR = "./external/jasmin.jar"
-TEST_DIR = "./test/testcases/"
-SOL_DIR = "./test/solutions/"
+
+JASMIN_JAR = os.path.join(".",os.path.join("external","jasmin.jar"))
+TEST_DIR = os.path.join(".",os.path.join("test","testcases"))
+SOL_DIR = os.path.join(".",os.path.join("test","solutions"))
 Lexer = MPLexer
 Parser = MPParser
 
 class TestUtil:
     @staticmethod
     def makeSource(inputStr,num):
-        filename = TEST_DIR + str(num) + ".txt"
+        filename = os.path.join(TEST_DIR,str(num) + ".txt")
         file = open(filename,"w")
         file.write(inputStr)
         file.close()
@@ -35,13 +35,13 @@ class TestLexer:
     def test(input,expect,num):
         inputfile = TestUtil.makeSource(input,num)
         TestLexer.check(SOL_DIR,inputfile,num)
-        dest = open(SOL_DIR + str(num) + ".txt","r")
+        dest = open(os.path.join(SOL_DIR ,str(num) + ".txt"),"r")
         line = dest.read()
         return line == expect
     
     @staticmethod
     def check(soldir,inputfile,num):
-        dest = open(soldir + "/" + str(num) + ".txt","w")
+        dest = open(os.path.join(soldir, str(num) + ".txt"),"w")
         lexer = Lexer(inputfile)
         try:
             TestLexer.printLexeme(dest,lexer)
@@ -78,13 +78,13 @@ class TestParser:
     def test(input,expect,num):
         inputfile = TestUtil.makeSource(input,num)
         TestParser.check(SOL_DIR,inputfile,num)
-        dest = open(SOL_DIR + str(num) + ".txt","r")
+        dest = open(os.path.join(SOL_DIR ,str(num) + ".txt"),"r")
         line = dest.read()
         return line == expect
 
     @staticmethod
     def check(soldir,inputfile,num):
-        dest = open(soldir + "/" + str(num) + ".txt","w")
+        dest = open(os.path.join(soldir,str(num) + ".txt"),"w")
         lexer = Lexer(inputfile)
         listener = TestParser.createErrorListener()
         tokens = CommonTokenStream(lexer)
@@ -106,13 +106,13 @@ class TestAST:
     def test(input,expect,num):
         inputfile = TestUtil.makeSource(input,num)
         TestAST.check(SOL_DIR,inputfile,num)
-        dest = open(SOL_DIR + str(num) + ".txt","r")
+        dest = open(os.path.join(SOL_DIR, str(num) + ".txt"),"r")
         line = dest.read()
         return line == expect
 
     @staticmethod
     def check(soldir,inputfile,num):
-        dest = open(soldir + "/" + str(num) + ".txt","w")
+        dest = open(os.path.join(soldir, str(num) + ".txt"),"w")
         lexer = Lexer(inputfile)
         tokens = CommonTokenStream(lexer)
         parser = Parser(tokens)
@@ -143,26 +143,22 @@ class TestChecker:
             inputfile = TestUtil.makeSource(str(input),num)
             asttree = input       
         TestChecker.check(SOL_DIR,asttree,num)
-        dest = open(SOL_DIR + "/" + str(num) + ".txt","r")
+        dest = open(os.path.join(SOL_DIR, str(num) + ".txt"),"r")
         line = dest.read()
-        if type(expect) is list:
-            res = '[' + ','.join(str(i) for i in expect) + ']'
-        else:
-            res = expect
-        return line == res
+        return line == expect
 
     @staticmethod
     def check(soldir,asttree,num):  
-        dest = open(soldir + "/" + str(num) + ".txt","w")     
+        dest = open(os.path.join(soldir,str(num) + ".txt"),"w")     
         checker = StaticChecker(asttree)
         try:
             res = checker.check()
-            dest.write('[' + ','.join(str(i) for i in res) + ']')
+            dest.write(str(list(res)))
         except StaticError as e:
             dest.write(str(e))
         finally:
             dest.close()
-"""
+
 class TestCodeGen():
     @staticmethod
     def test(input, expect, num):
@@ -179,23 +175,23 @@ class TestCodeGen():
         
         TestCodeGen.check(SOL_DIR,asttree,num)
         
-        dest = open(SOL_DIR + "/" + str(num) + ".txt","r")
+        dest = open(os.path.join(SOL_DIR, str(num) + ".txt"),"r")
         line = dest.read()
         return line == expect
 
     @staticmethod
     def check(soldir,asttree,num):
         codeGen = CodeGenerator()
-        path = soldir + "/" + str(num)
+        path = os.path.join(soldir,str(num))
         if not os.path.isdir(path):
             os.mkdir(path)
-        f = open(soldir + "/" + str(num) + ".txt","w")
+        f = open(os.path.join(soldir, str(num) + ".txt"),"w")
         try:
             codeGen.gen(asttree, path)
             
-            subprocess.call("java  -jar "+ JASMIN_JAR + " " + path + "/MCClass.j",shell=True,stderr=subprocess.STDOUT)
-            
-            subprocess.run("java -cp ./lib:. MCClass",shell=True, stdout = f, timeout=10)
+            subprocess.call("java  -jar "+ JASMIN_JAR + " " + path + "/MPClass.j",shell=True,stderr=subprocess.STDOUT)
+            cmd = "java -cp ./lib" + os.pathsep + ". MPClass"
+            subprocess.run(cmd,shell=True, stdout = f, timeout=10)
         except StaticError as e:
             f.write(str(e))
         except subprocess.TimeoutExpired:
@@ -205,4 +201,4 @@ class TestCodeGen():
         finally:
             f.close()
             
-            """
+            

@@ -1,1 +1,0 @@
-Program([FuncDecl(Id(main),[VarDecl(Id(f),IntType)],VoidType(),[],[AssignStmt(Id(f),IntLiteral(5)),Continue])])

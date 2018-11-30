@@ -1,1 +1,1 @@
-[Symbol(main,Mtype([],VoidType()))]
+Undeclared Procedure: foo

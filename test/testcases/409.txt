@@ -1,1 +1,0 @@
-Program([FuncDecl(Id(main),[],VoidType(),[VarDecl(Id(x),IntType)],[For(Id(x)IntLiteral(1),IntLiteral(10),True,[Continue])])])

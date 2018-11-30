@@ -1,1 +1,1 @@
-[Symbol(main,Mtype([],VoidType()))]
+Type Mismatch In Statement: CallStmt(Id(putIntLn),[])

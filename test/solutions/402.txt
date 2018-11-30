@@ -1,1 +1,1 @@
-[Symbol(putStringLns,StringType)]
+Undeclared Procedure: foo
