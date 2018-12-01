@@ -38,6 +38,8 @@ class Emitter():
         typeIn = type(inType)
         if typeIn is IntType:
             return "int"
+        elif typeIn is FloatType:
+            return "float"
         elif typeIn is cgen.StringType:
             return "java/lang/String"
         elif typeIn is VoidType:
@@ -59,12 +61,12 @@ class Emitter():
             else:
                 return self.jvm.emitLDC(i)
         elif type(in_) is str:
-            if in_ == "true":
+            if in_ in ["True", "true", 'TRue', 'TRUE', 'TRUe', 'trUE', 'TrUE'] :
                 return self.emitPUSHICONST(1, frame)
-            elif in_ == "false":
+            elif in_ == "False" or in_ == "false":
                 return self.emitPUSHICONST(0, frame)
             else:
-                return self.emitPUSHICONST(int(in_), frame)
+                return self.emitPUSHICONST(1 if in_ is "True" else 0, frame)
 
     def emitPUSHFCONST(self, in_, frame):
         #in_: String
@@ -95,7 +97,10 @@ class Emitter():
             return self.emitPUSHICONST(1 if _in == True else 0, frame) 
         elif type(typ) is StringType:
             frame.push()
-            return self.jvm.emitLDC(in_)
+            if in_ is None:
+                return self.jvm.emitPUSHNULL()
+            else:
+                return self.jvm.emitLDC("\"" + in_ + "\"")
         else:
             raise IllegalOperandException(in_)
 
@@ -220,7 +225,6 @@ class Emitter():
         #in_: Type
         #isFinal: Boolean
         #value: String
-
         return self.jvm.emitSTATICFIELD(lexeme, self.getJVMType(in_), False)
 
     def emitGETSTATIC(self, lexeme, in_, frame):
@@ -589,9 +593,14 @@ class Emitter():
         if type(in_) is IntType:
             frame.pop()
             return self.jvm.emitIRETURN()
+        elif type(in_) is FloatType:
+            frame.pop()
+            return self.jvm.emitFRETURN()
         elif type(in_) is VoidType:
             return self.jvm.emitRETURN()
-
+        elif type(in_) is StringType:
+            frame.pop()
+            return self.jvm.emitARETURN()
     ''' generate code that represents a label	
     *   @param label the label
     *   @return code Label<label>:

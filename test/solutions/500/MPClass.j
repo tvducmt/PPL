@@ -5,7 +5,7 @@
 .method public static main([Ljava/lang/String;)V
 .var 0 is args [Ljava/lang/String; from Label0 to Label1
 Label0:
-	bipush 100
+	iconst_5
 	invokestatic io/putInt(I)V
 Label1:
 	return

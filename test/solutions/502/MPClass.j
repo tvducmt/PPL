@@ -9,12 +9,15 @@ Label0:
 Label2:
 	iconst_1
 	ifle Label3
-	bipush 6
-	istore_0
+	iconst_1
+	goto Label1
 	goto Label2
 Label3:
+	iconst_2
+	goto Label1
 Label1:
-.limit stack 2
+	ireturn
+.limit stack 3
 .limit locals 1
 .end method
 

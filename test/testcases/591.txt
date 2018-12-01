@@ -1,0 +1,11 @@
+ 
+        var a,b: integer; c: boolean;
+        
+        procedure main();
+        begin  
+            b := 5;
+            putInt(fact(b));
+        end
+
+        
+        

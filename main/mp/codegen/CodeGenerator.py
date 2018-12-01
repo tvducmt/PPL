@@ -197,6 +197,8 @@ class CodeGenVisitor(BaseVisitor, Utils):
         self.emit.printout(self.emit.emitLABEL(frame.getEndLabel(), frame))
         if type(returnType) is VoidType:
             self.emit.printout(self.emit.emitRETURN(VoidType(), frame))
+        else:
+            self.emit.printout(self.emit.emitRETURN(returnType, frame))
         self.emit.printout(self.emit.emitENDMETHOD(frame))
         frame.exitScope();
 
@@ -218,6 +220,7 @@ class CodeGenVisitor(BaseVisitor, Utils):
         #o: Any
         subctxt = o
         frame = Frame(ast.name, ast.returnType)
+        self.curFunc = self.lookup(ast.name.name, subctxt.sym, lambda x: x.name)
         self.genMETHOD(ast, subctxt.sym, frame)
         return SubBody(None, [Symbol(ast.name, MType(list(), ast.returnType), CName(self.className))] + subctxt.sym)
     
@@ -272,6 +275,15 @@ class CodeGenVisitor(BaseVisitor, Utils):
     def visitBreak(self, ast, c):
         self.emit.printout(self.emit.emitLABEL(c.frame.getBreakLabel(), c.frame))
     
+    def visitReturn(self, ast, c):
+        if ast.expr:
+            (resExp,resType) = self.visit(ast.expr, Access(c.frame, c.sym, False, True))
+            typeFun =  self.curFunc.mtype.rettype
+            if type(typeFun) is FloatType and type(resType) is IntType:
+                self.emit.printout(resExp+ self.emit.emitI2F(c.frame))
+            else:
+                self.emit.printout(resExp)
+        self.emit.printout(self.emit.emitGOTO(c.frame.getEndLabel(),c.frame))
     def visitWhile(self, ast, c): # 
         frame = c.frame
         nenv = c.sym
@@ -281,21 +293,24 @@ class CodeGenVisitor(BaseVisitor, Utils):
         continueLabel = frame.getContinueLabel()
         # code for continueLabel
         self.emit.printout(self.emit.emitLABEL(continueLabel, frame))
-        expr, typeD = self.visit(ast.exp, Access(frame, nenv, False, False))
+        expr, typeD = self.visit(ast.exp, Access(frame, nenv, False, True))
         #print(expr)
         #print(typeD)
         self.emit.printout(expr+ self.emit.emitIFFALSE(breakLabel, frame))
 
         for x in ast.sl:
             self.visit(x, SubBody(frame, nenv))
-            if type(x) is Return:
-                break                 
-        
+            
         self.emit.printout(self.emit.emitGOTO(continueLabel, frame))
         self.emit.printout(self.emit.emitLABEL(breakLabel, frame))
         frame.exitLoop()
-
     def visitCallStmt(self, ast, o):
+        self.callStmtAndExp(ast, o)
+        
+    def visitCallExpr(self, ast, o):
+        self.callStmtAndExp(ast, o)
+
+    def callStmtAndExp(self, ast, o):
         #ast: CallStmt
         #o: Any
 
@@ -306,19 +321,23 @@ class CodeGenVisitor(BaseVisitor, Utils):
         cname = sym.value.value
     
         ctype = sym.mtype
+        partype = sym.mtype.partype
         #print(ctype)
         #print(cname)
         #print((sym.name))
        # print(frame)
         in_ = ("", list())
-        for x in ast.param:
-            str1, typ1 = self.visit(x, Access(frame, nenv, False, True))
-            #print(str1)
-            #print(typ1)
+        for x in range(len(ast.param)):
+            str1, typ1 = self.visit(ast.param[x], Access(frame, nenv, False, True))
             in_ = (in_[0] + str1, in_[1].append(typ1))
-        self.emit.printout(in_[0])
-        self.emit.printout(self.emit.emitINVOKESTATIC(cname + "/" + ast.method.name, ctype, frame))
-        
+            if type(partype[x]) is FloatType and type(typ1) is IntType:
+                in_ = (in_[0] + self.emit.emitI2F(frame), in_[1])
+        if type(ast) is CallStmt:
+            self.emit.printout(in_[0])
+            self.emit.printout(self.emit.emitINVOKESTATIC(cname + "/" + ast.method.name, ctype, frame))
+        else:
+            return in_[0] + self.emit.emitINVOKESTATIC(cname + "/" + ast.method.name, ctype, frame)
+    
     def visitIntLiteral(self, ast, o):
         #ast: IntLiteral
         #o: Any
@@ -339,7 +358,7 @@ class CodeGenVisitor(BaseVisitor, Utils):
     def visitStringLiteral(self, ast, o):
         ctxt = o
         frame = ctxt.frame
-        return self.emit.emitPUSHCONST(str(ast.value), frame), StringType()
+        return self.emit.emitPUSHCONST(ast.value, StringType(), frame), StringType()
 
     def visitId(self, ast, c):
         sym = self.lookup(ast.name, c.sym, lambda x: x.name)
@@ -372,10 +391,10 @@ class CodeGenVisitor(BaseVisitor, Utils):
     def visitBinaryOp(self, ast, o):
         ctxt = o;
         frame = ctxt.frame
-        lc, lt= self.visit(ast.left, Access(frame, o.sym, False, False))
-        rc, rt= self.visit(ast.right, Access(frame, o.sym, False, False))
+        lc, lt= self.visit(ast.left, Access(frame, o.sym, False, True))
+        rc, rt= self.visit(ast.right, Access(frame, o.sym, False, True))
        # print(lc)
-        #print(rc)
+        #print(rc) a(ifl)+b(int) 
         if ast.op in ['+', '-']:
             if self.checkEqual(lt, rt):
                 return lc + rc + self.emit.emitADDOP(ast.op, lt, frame), lt
