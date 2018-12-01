@@ -160,9 +160,10 @@ class Emitter():
         #index: Int
         #frame: Frame
         #... -> ..., value
-        
         frame.push()
         if type(inType) is IntType:
+            return self.jvm.emitILOAD(index)
+        elif type(inType) is BoolType:
             return self.jvm.emitILOAD(index)
         elif type(inType) is cgen.ArrayPointerType or type(inType) is cgen.ClassType or type(inType) is StringType:
             return self.jvm.emitALOAD(index)

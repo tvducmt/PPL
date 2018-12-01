@@ -1,0 +1,1 @@
+Program([VarDecl(Id(a),IntType),VarDecl(Id(b),FloatType),FuncDecl(Id(main),[],VoidType(),[],[With([VarDecl(Id(a),FloatType)],[AssignStmt(Id(a),FloatLiteral(1.1)),CallStmt(Id(putFloat),[Id(a)])]),With([VarDecl(Id(f),BoolType)],[AssignStmt(Id(f),BooleanLiteral(True)),CallStmt(Id(putBool),[Id(f)])])])])
