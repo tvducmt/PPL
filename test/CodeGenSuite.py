@@ -314,18 +314,18 @@ class CheckCodeGenSuite(unittest.TestCase):
         ])
         expect = "false"
         self.assertTrue(TestCodeGen.test(input,expect,533))
-# def test_local_declare_1(self):
-#         input = Program([
-#             VarDecl(Id('a'),IntType()),
-#             VarDecl(Id('b'),IntType()),
-#             VarDecl(Id('c'),FloatType()),
-#             VarDecl(Id('d'),FloatType()),
-#             FuncDecl(Id('main'),[],[],
-#                 [CallStmt(Id('putFloat'),[CallExpr(Id('foo'),[Id('c')])])]),
-#             FuncDecl(Id('foo'),[VarDecl(Id('a'),FloatType())],[VarDecl(Id('x'),BoolType()),VarDecl(Id('y'),BoolType())],[Assign(Id('a'),FloatLiteral(2.5)),Return((Id('a')))], FloatType()),VarDecl(Id('e'),BoolType()),VarDecl(Id('f'),BoolType()),VarDecl(Id('g'),StringType()),VarDecl(Id('h'),StringType())
-#             ])
-#         expect = "2.5"
-#         self.assertTrue(TestCodeGen.test(input,expect,534))
+    def test_local_declare_1(self):
+        input = Program([
+            VarDecl(Id('a'),IntType()),
+            VarDecl(Id('b'),IntType()),
+            VarDecl(Id('c'),FloatType()),
+            VarDecl(Id('d'),FloatType()),
+            FuncDecl(Id('main'),[],[],
+                [CallStmt(Id('putFloat'),[CallExpr(Id('foo'),[Id('c')])])]),
+            FuncDecl(Id('foo'),[VarDecl(Id('a'),FloatType())],[VarDecl(Id('x'),BoolType()),VarDecl(Id('y'),BoolType())],[Assign(Id('a'),FloatLiteral(2.5)),Return((Id('a')))], FloatType()),VarDecl(Id('e'),BoolType()),VarDecl(Id('f'),BoolType()),VarDecl(Id('g'),StringType()),VarDecl(Id('h'),StringType())
+            ])
+        expect = "2.5"
+        self.assertTrue(TestCodeGen.test(input,expect,534))
     def test_short_circuit_1(self):
         input = Program([
             
@@ -376,19 +376,47 @@ class CheckCodeGenSuite(unittest.TestCase):
         input = Program([VarDecl(Id('a'),IntType()),VarDecl(Id('c'),IntType()),VarDecl(Id('b'),IntType()),VarDecl(Id('e'),FloatType()),VarDecl(Id('d'),BoolType()),FuncDecl(Id('main'),[],[],[Assign(Id('b'),IntLiteral(5)),Assign(Id('c'),IntLiteral(2)),With([VarDecl(Id('a'),BoolType())],[Assign(Id('a'),BinaryOp('>',Id('c'),IntLiteral(3))),If(BinaryOp('or',Id('a'),BooleanLiteral(True)),[While(BinaryOp('<',Id('b'),IntLiteral(15)),[CallStmt(Id('putInt'),[Id('b')]),Assign(Id('b'),BinaryOp('+',Id('b'),IntLiteral(3)))])],[])])])])
         expect = "581114"
         self.assertTrue(TestCodeGen.test(input,expect,543))
-    def test_for_statement_2(self):
+    def test_for_statement_1(self):
         input = Program([VarDecl(Id('a'),IntType()),VarDecl(Id('b'),FloatType()),FuncDecl(Id('main'),[],[],[For(Id('a'),IntLiteral(1),IntLiteral(5),True,[CallStmt(Id('putInt'),[Id('a')])])])])
         expect = "12345"
         self.assertTrue(TestCodeGen.test(input,expect,544))
+    def test_continue_statement_1(self):
+        input = Program([VarDecl(Id('a'),IntType()),VarDecl(Id('b'),FloatType()),FuncDecl(Id('main'),[],[],[Assign(Id('a'),IntLiteral(1)),While(BinaryOp('<=',Id('a'),IntLiteral(5)),[Assign(Id('a'),BinaryOp('+',Id('a'),IntLiteral(1))),If(BinaryOp('=',Id('a'),IntLiteral(3)),[Continue()],[]),CallStmt(Id('putInt'),[Id('a')])])])])
+        expect = "2456"
+        self.assertTrue(TestCodeGen.test(input,expect,545))
+    def test_continue_statement_2(self):
+        input = Program([VarDecl(Id('a'),IntType()),VarDecl(Id('c'),IntType()),VarDecl(Id('b'),FloatType()),FuncDecl(Id('main'),[],[],[Assign(Id('a'),IntLiteral(5)),While(BinaryOp('<',Id('a'),IntLiteral(10)),[CallStmt(Id('putInt'),[Id('a')]),Assign(Id('a'),BinaryOp('+',Id('a'),IntLiteral(1))),If(BinaryOp('=',Id('a'),IntLiteral(8)),[Continue()],[]),Assign(Id('c'),Id('a')),While(BinaryOp('>',Id('c'),IntLiteral(0)),[Assign(Id('c'),BinaryOp('-',Id('c'),IntLiteral(1))),If(BinaryOp('=',Id('c'),IntLiteral(3)),[Continue()],[]),CallStmt(Id('putInt'),[Id('c')])])])])])
+        expect = "554210665421078876542109987654210"
+        self.assertTrue(TestCodeGen.test(input,expect,546))
+    def test_continue_statement_8(self):
+        input = Program([VarDecl(Id('a'),IntType()),VarDecl(Id('c'),IntType()),VarDecl(Id('b'),FloatType()),FuncDecl(Id('main'),[], [],[For(Id('a'),IntLiteral(5),IntLiteral(10),True,[If(BinaryOp('=',Id('a'),IntLiteral(9)),[Break()],[]),CallStmt(Id('putInt'),[Id('a')]),Assign(Id('c'),Id('a')),While(BinaryOp('>',Id('c'),IntLiteral(1)),[Assign(Id('c'),BinaryOp('-',Id('c'),IntLiteral(1))),If(BinaryOp('=',Id('c'),IntLiteral(3)),[Continue()],[]),CallStmt(Id('putInt'),[Id('c')])])])])])
+        expect = "5421654217654218765421"
+        self.assertTrue(TestCodeGen.test(input,expect,547))
 
 
-
-
-
-
-
-
-
+    def test_call_expression_1(self):
+        input = Program([VarDecl(Id('a'),IntType()),VarDecl(Id('b'),BoolType()),FuncDecl(Id('foo'),[],[],[Return((IntLiteral(5)))], IntType()),FuncDecl(Id('main'),[],[],[CallStmt(Id('putInt'),[CallExpr(Id('foo'),[])])])])
+        expect = "5"
+        self.assertTrue(TestCodeGen.test(input,expect,548))
+    def test_call_expression_2(self):
+        input = Program([VarDecl(Id('a'),IntType()),VarDecl(Id('b'),BoolType()),FuncDecl(Id('foo'),[VarDecl(Id('x'),IntType())],[],[Return((Id('x')))] ,IntType()),FuncDecl(Id('main'),[],[],[Assign(Id('a'),IntLiteral(2)),CallStmt(Id('putInt'),[CallExpr(Id('foo'),[Id('a')])])])])
+        expect = "2"
+        self.assertTrue(TestCodeGen.test(input,expect,549))
+    
+   
+    def test_call_expression_4(self):
+        input = Program([VarDecl(Id('a'),IntType()),VarDecl(Id('b'),BoolType()),FuncDecl(Id('foo'),[VarDecl(Id('x'),IntType())],[VarDecl(Id('a'),IntType())],[Assign(Id('a'),IntLiteral(3)),Return((BinaryOp('+',Id('x'),Id('a'))))], IntType()),FuncDecl(Id('main'),[],[],[Assign(Id('a'),IntLiteral(2)),CallStmt(Id('putInt'),[CallExpr(Id('foo'),[Id('a')])])])])
+        expect = "5"
+        self.assertTrue(TestCodeGen.test(input,expect,551))
+    def test_call_expression_5(self):
+        input = Program([VarDecl(Id('a'),FloatType()),VarDecl(Id('c'),IntType()),FuncDecl(Id('main'),[],[],[Assign(Id('a'),FloatLiteral(7.5)),Assign(Id('c'),IntLiteral(1)),CallStmt(Id('putFloat'),[CallExpr(Id('foo'),[Id('a'),BinaryOp('*',Id('c'),IntLiteral(2))])])]),FuncDecl(Id('foo'),[VarDecl(Id('x'),FloatType()),VarDecl(Id('y'),IntType())],[],[Return((BinaryOp('/',Id('x'),Id('y'))))], FloatType())])
+        expect = "3.75"
+        self.assertTrue(TestCodeGen.test(input,expect,552))
+    
+    # # # def test_call_expression_6(self):
+    # # #     input = Program([VarDecl(Id('a'),IntType()),VarDecl(Id('b'),BoolType()),FuncDecl(Id('main'),[],[],[Assign(Id('a'),IntLiteral(2)),CallStmt(Id('putBool'),[CallExpr(Id('greater'),[Id('a'),BinaryOp('+',IntLiteral(4),IntLiteral(1))])])]),FuncDecl(Id('greater'),[VarDecl(Id('x'),IntType()),VarDecl(Id('y'),IntType())],[],[Return((BinaryOp('>',Id('x'),Id('y'))))],BoolType())])
+    # # #     expect = "false"
+    # # #     self.assertTrue(TestCodeGen.test(input,expect,553))
 
 
 

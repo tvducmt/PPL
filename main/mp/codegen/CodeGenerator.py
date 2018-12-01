@@ -159,10 +159,9 @@ class CodeGenVisitor(BaseVisitor, Utils):
         isMain = consdecl.name.name == "main" and len(consdecl.param) == 0 and type(consdecl.returnType) is VoidType
         returnType = VoidType() if isInit else consdecl.returnType
         methodName = "<init>" if isInit else consdecl.name.name
-        intype = [ArrayPointerType(StringType())] if isMain else list()
+        intype = [ArrayPointerType(StringType())] if isMain else [x.varType for x in consdecl.param]
         mtype = MType(intype, returnType)
         self.emit.printout(self.emit.emitMETHOD(methodName, mtype, not isInit, frame))
-
         frame.enterScope(True)
 
         
@@ -174,17 +173,16 @@ class CodeGenVisitor(BaseVisitor, Utils):
             self.emit.printout(self.emit.emitVAR(frame.getNewIndex(), "args", ArrayPointerType(StringType()), frame.getStartLabel(), frame.getEndLabel(), frame))
         else:
             for x in consdecl.param:
-                self.emit.printout(self.emit.emitVAR(frame.getNewIndex(), x.variable.name, x.varType, frame.getStartLabel(), frame.getEndLabel(), frame))
-                lsVarLocal.append(Symbol(x.variable.name, x.varType,Index(frame.currIndex-1)))
+                self.visit(x, SubBody(frame,lsVarLocal))
+                #self.emit.printout(self.emit.emitVAR(frame.getNewIndex(), x.variable.name, x.varType, frame.getStartLabel(), frame.getEndLabel(), frame))
+                #lsVarLocal.append(Symbol(x.variable.name, x.varType,Index(frame.currIndex-1)))
         for y in consdecl.local:
-            self.emit.printout(self.emit.emitVAR(frame.getNewIndex(), y.variable.name, y.varType, frame.getStartLabel(), frame.getEndLabel(), frame))
-            lsVarLocal.append(Symbol(y.variable.name, y.varType,Index(frame.currIndex-1)))
+            self.visit(y, SubBody(frame,lsVarLocal))
+            #self.emit.printout(self.emit.emitVAR(frame.getNewIndex(), y.variable.name, y.varType, frame.getStartLabel(), frame.getEndLabel(), frame))
+            #lsVarLocal.append(Symbol(y.variable.name, y.varType,Index(frame.currIndex-1)))
         
-       # glenv = o + lsVarLocal
-        #print(o)
         glenv = lsVarLocal + (o if o != None else [])
             
-        #f=========
         body = consdecl.body
         self.emit.printout(self.emit.emitLABEL(frame.getStartLabel(), frame))
 
@@ -270,11 +268,11 @@ class CodeGenVisitor(BaseVisitor, Utils):
     # def visitFor(self, ast, c):
     
     def visitContinue(self, ast, c):
-        self.emit.printout(self.emit.emitLABEL(c.frame.getContinueLabel(), c.frame))
+        self.emit.printout(self.emit.emitGOTO(c.frame.getContinueLabel(), c.frame))
     
     def visitBreak(self, ast, c):
-        self.emit.printout(self.emit.emitLABEL(c.frame.getBreakLabel(), c.frame))
-    
+        self.emit.printout(self.emit.emitGOTO(c.frame.getBreakLabel(), c.frame))
+
     def visitReturn(self, ast, c):
         if ast.expr:
             (resExp,resType) = self.visit(ast.expr, Access(c.frame, c.sym, False, True))
@@ -348,7 +346,7 @@ class CodeGenVisitor(BaseVisitor, Utils):
         self.callStmtAndExp(ast, o)
         #print(self.callStmtAndExp(ast, o))
     def visitCallExpr(self, ast, o):
-        return self.callStmtAndExp(ast, o)
+        return (self.callStmtAndExp(ast, o)[0], self.callStmtAndExp(ast, o)[1]) 
 
     def callStmtAndExp(self, ast, o):
         #ast: CallStmt
@@ -361,6 +359,7 @@ class CodeGenVisitor(BaseVisitor, Utils):
         cname = sym.value.value
     
         ctype = sym.mtype
+        returnType = ctype.rettype 
         partype = sym.mtype.partype
         #print(ctype)
         #print(cname)
@@ -382,7 +381,7 @@ class CodeGenVisitor(BaseVisitor, Utils):
             self.emit.printout(code)
             self.emit.printout(self.emit.emitINVOKESTATIC(cname + "/" + ast.method.name, ctype, frame))
         else:
-            return code + self.emit.emitINVOKESTATIC(cname + "/" + ast.method.name, ctype, frame)
+            return (code + self.emit.emitINVOKESTATIC(cname + "/" + ast.method.name, ctype, frame), returnType)
     
     def visitIntLiteral(self, ast, o):
         #ast: IntLiteral
@@ -414,7 +413,6 @@ class CodeGenVisitor(BaseVisitor, Utils):
             else:
                 return self.emit.emitWRITEVAR(sym.name, sym.mtype, sym.value.value , c.frame), sym.mtype
         else:
-            
             if type(sym.value) is CName:
                 return self.emit.emitGETSTATIC(self.className +'.'+sym.name, sym.mtype, c.frame), sym.mtype
             else:
