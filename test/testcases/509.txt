@@ -1,9 +1,1 @@
-
-            var a,b,c: integer; d: real;
-            procedure main();
-            begin          
-                a := b:= c:= 5;
-                putInt(c);
-                putInt(a);
-            end
-            
+Program([VarDecl(Id(a),IntType),VarDecl(Id(b),IntType),VarDecl(Id(c),IntType),VarDecl(Id(d),FloatType),FuncDecl(Id(main),[],VoidType(),[],[CallStmt(Id(putFloat),[BinaryOp(/,IntLiteral(4),IntLiteral(2))])])])

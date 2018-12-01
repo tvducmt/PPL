@@ -66,7 +66,7 @@ class Emitter():
             elif in_ == "False" or in_ == "false":
                 return self.emitPUSHICONST(0, frame)
             else:
-                return self.emitPUSHICONST(1 if in_ is "True" else 0, frame)
+                return self.emitPUSHICONST(int(in_), frame)
 
     def emitPUSHFCONST(self, in_, frame):
         #in_: String
@@ -88,14 +88,15 @@ class Emitter():
         #in_: String
         #typ: Type
         #frame: Frame
-        
         if type(typ) is IntType:
             return self.emitPUSHICONST(in_, frame)
         elif type(typ) is FloatType:
             return self.emitPUSHFCONST(in_, frame)
         elif type(typ) is BoolType:
-            return self.emitPUSHICONST(1 if _in == True else 0, frame) 
+           # print(in_)
+            return self.emitPUSHICONST(1 if in_ == True else 0, frame) 
         elif type(typ) is StringType:
+            
             frame.push()
             if in_ is None:
                 return self.jvm.emitPUSHNULL()
@@ -331,12 +332,12 @@ class Emitter():
         label1 = frame.getNewLabel()
         label2 = frame.getNewLabel()
         result = list()
-        result.append(emitIFTRUE(label1, frame))
-        result.append(emitPUSHCONST("true", in_, frame))
-        result.append(emitGOTO(label2, frame))
-        result.append(emitLABEL(label1, frame))
-        result.append(emitPUSHCONST("false", in_, frame))
-        result.append(emitLABEL(label2, frame))
+        result.append(self.emitIFTRUE(label1, frame))
+        result.append(self.emitPUSHCONST("true", in_, frame))
+        result.append(self.emitGOTO(label2, frame))
+        result.append(self.emitLABEL(label1, frame))
+        result.append(self.emitPUSHCONST("false", in_, frame))
+        result.append(self.emitLABEL(label2, frame))
         return ''.join(result)
 
     '''
@@ -430,17 +431,41 @@ class Emitter():
         frame.pop()
         frame.pop()
         if op == ">":
-            result.append(self.jvm.emitIFICMPLE(labelF))
+            if type(in_) is FloatType:
+                result.append(self.jvm.emitFCMPL())
+                result.append(self.jvm.emitIFLE(labelF))
+            else:
+                result.append(self.jvm.emitIFICMPLE(labelF))
         elif op == ">=":
-            result.append(self.jvm.emitIFICMPLT(labelF))
+            if type(in_) is FloatType:
+                result.append(self.jvm.emitFCMPL())
+                result.append(self.jvm.emitIFLT (labelF))
+            else:
+                result.append(self.jvm.emitIFICMPLT(labelF))
         elif op == "<":
-            result.append(self.jvm.emitIFICMPGE(labelF))
+            if type(in_) is FloatType:
+                result.append(self.jvm.emitFCMPL())
+                result.append(self.jvm.emitIFGE(labelF))
+            else:
+                result.append(self.jvm.emitIFICMPGE(labelF))
         elif op == "<=":
-            result.append(self.jvm.emitIFICMPGT(labelF))
-        elif op == "!=":
-            result.append(self.jvm.emitIFICMPEQ(labelF))
-        elif op == "==":
-            result.append(self.jvm.emitIFICMPNE(labelF))
+            if type(in_) is FloatType:
+                result.append(self.jvm.emitFCMPL())
+                result.append(self.jvm.emitIFGT(labelF))
+            else:
+                result.append(self.jvm.emitIFICMPGT(labelF))
+        elif op == "<>":
+            if type(in_) is FloatType:
+                result.append(self.jvm.emitFCMPL())
+                result.append(self.jvm.emitIFEQ(labelF))
+            else:
+                result.append(self.jvm.emitIFICMPEQ(labelF))
+        elif op == "=":
+            if type(in_) is FloatType:
+                result.append(self.jvm.emitFCMPL())
+                result.append(self.jvm.emitIFNE(labelF))
+            else:
+                result.append(self.jvm.emitIFICMPNE(labelF))
         result.append(self.emitPUSHCONST("1", IntType(), frame))
         frame.pop()
         result.append(self.emitGOTO(labelO, frame))
@@ -470,9 +495,9 @@ class Emitter():
             result.append(self.jvm.emitIFICMPGE(falseLabel))
         elif op == "<=":
             result.append(self.jvm.emitIFICMPGT(falseLabel))
-        elif op == "!=":
+        elif op == "<>":
             result.append(self.jvm.emitIFICMPEQ(falseLabel))
-        elif op == "==":
+        elif op == "=":
             result.append(self.jvm.emitIFICMPNE(falseLabel))
         result.append(self.jvm.emitGOTO(trueLabel))
         return ''.join(result)

@@ -243,8 +243,7 @@ class CodeGenVisitor(BaseVisitor, Utils):
         nenv = ctxt.sym
         #Code for expr
         expr, typeD = self.visit(ast.expr, Access(frame, nenv, False, False))
-        print(expr)
-        print(typeD)
+       
         #Get 2 new lables
         falseLabel = frame.getNewLabel()
         trueLabel = frame.getNewLabel()
@@ -414,7 +413,7 @@ class CodeGenVisitor(BaseVisitor, Utils):
         elif ast.op  == '/':
             if self.checkEqual(lt, rt):
                 if type(lt) is IntType:
-                    return lc + self.emit.emitI2F(frame) + rc + self.emit.emitI2F(frame) + self.emit.emitMULOP(ast.op, FloatType, frame), FloatType
+                    return lc + self.emit.emitI2F(frame) + rc + self.emit.emitI2F(frame) + self.emit.emitMULOP(ast.op, FloatType, frame), FloatType()
                 return lc + rc + self.emit.emitMULOP(ast.op, lt, frame), lt
             else:
                 if type(lt) is FloatType and type(rt) is IntType:
@@ -426,16 +425,16 @@ class CodeGenVisitor(BaseVisitor, Utils):
         elif ast.op == 'mod':
             return lc + rc + self.emit.emitMOD(frame), lt 
         elif ast.op == 'and':
-            return lc + rc + self.emit.emitANDOP(frame), BoolType
+            return lc + rc + self.emit.emitANDOP(frame), BoolType()
         elif ast.op == 'or':
-            return lc + rc + self.emit.emitOROP(frame), BoolType 
+            return lc + rc + self.emit.emitOROP(frame), BoolType() 
         elif ast.op in ['<', '<=', '>', '>=', '<>', '=']:
             if type(lt) is FloatType and type(rt) is IntType:
-                return lc + rc + self.emit.emitI2F(frame)+ self.emit.emitREOP(ast.op, FloatType, frame), BoolType
+                return lc + rc + self.emit.emitI2F(frame)+ self.emit.emitREOP(ast.op, FloatType(), frame), BoolType()
             elif type(lt) is IntType and type(rt) is FloatType:
-                return lc + self.emit.emitI2F(frame) + rc+ self.emit.emitREOP(ast.op, FloatType, frame), BoolType
+                return lc + self.emit.emitI2F(frame) + rc+ self.emit.emitREOP(ast.op, FloatType(), frame), BoolType()
             else:
-                return lc + rc+ self.emit.emitREOP(ast.op, lt, frame), BoolType
+                return lc + rc+ self.emit.emitREOP(ast.op, lt, frame), BoolType()
         
             
             

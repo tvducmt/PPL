@@ -2,18 +2,26 @@
 .class public MPClass
 .super java.lang.Object
 .field static a I
-.field static b Z
+.field static b I
+.field static c I
+.field static d F
 
 .method public static main([Ljava/lang/String;)V
 .var 0 is args [Ljava/lang/String; from Label0 to Label1
 Label0:
-	iconst_1
-	putstatic MPClass.b Z
-	getstatic MPClass.b Z
-	invokestatic io/putBool(Z)V
+	iconst_5
+	putstatic MPClass.c I
+	getstatic MPClass.c I
+	putstatic MPClass.b I
+	getstatic MPClass.b I
+	putstatic MPClass.a I
+	getstatic MPClass.c I
+	invokestatic io/putInt(I)V
+	getstatic MPClass.a I
+	invokestatic io/putInt(I)V
 Label1:
 	return
-.limit stack 2
+.limit stack 1
 .limit locals 1
 .end method
 

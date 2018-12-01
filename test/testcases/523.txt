@@ -1,0 +1,1 @@
+Program([VarDecl(Id(a),IntType),FuncDecl(Id(main),[],VoidType(),[],[CallStmt(Id(putBool),[BinaryOp(or,BooleanLiteral(True),BinaryOp(and,BooleanLiteral(False),BooleanLiteral(False)))])])])
